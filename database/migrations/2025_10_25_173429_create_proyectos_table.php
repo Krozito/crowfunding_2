@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('proyectos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('creador_id')->constrained('usuarios')->cascadeOnDelete(); // FK ID_Creador
+            $table->foreignId('creador_id')->constrained('users')->cascadeOnDelete(); // FK ID_Creador
             $table->string('titulo');
             $table->longText('descripcion_proyecto')->nullable();
             $table->decimal('meta_financiacion', 15, 2)->default(0);

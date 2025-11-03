@@ -9,7 +9,7 @@ return new class extends Migration {
         Schema::create('auditorias', function (Blueprint $table) {
             $table->id();
             $table->foreignId('comprobante_id')->constrained('comprobantes_gastos')->cascadeOnDelete(); // FK ID_Comprobante
-            $table->foreignId('auditor_id')->nullable()->constrained('usuarios')->nullOnDelete(); // FK ID_Auditor
+            $table->foreignId('auditor_id')->nullable()->constrained('users')->nullOnDelete(); // FK ID_Auditor
             $table->dateTime('fecha_revision')->useCurrent();
             $table->string('resultado', 20)->default('pendiente')->index(); // aprobado/rechazado/pendiente
             $table->text('comentarios')->nullable();

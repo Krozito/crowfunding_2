@@ -7,9 +7,10 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void {
         Schema::create('usuario_rol', function (Blueprint $table) {
-            $table->foreignId('usuario_id')->constrained('usuarios')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+
             $table->foreignId('rol_id')->constrained('roles')->cascadeOnDelete();
-            $table->primary(['usuario_id','rol_id']);
+            $table->primary(['user_id','rol_id']);
         });
     }
     public function down(): void {

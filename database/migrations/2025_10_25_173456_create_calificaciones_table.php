@@ -9,7 +9,7 @@ return new class extends Migration {
         Schema::create('calificaciones', function (Blueprint $table) {
             $table->id();
             $table->foreignId('proyecto_id')->constrained('proyectos')->cascadeOnDelete();
-            $table->foreignId('colaborador_id')->nullable()->constrained('usuarios')->nullOnDelete();
+            $table->foreignId('colaborador_id')->nullable()->constrained('users')->nullOnDelete();
             $table->unsignedTinyInteger('puntaje'); // 1..5 típico
             $table->text('comentarios')->nullable();
             $table->dateTime('fecha_calificacion')->useCurrent();

@@ -9,7 +9,7 @@ return new class extends Migration {
         Schema::create('aportaciones', function (Blueprint $table) {
             $table->id();
             $table->foreignId('colaborador_id')->nullable()
-                  ->constrained('usuarios')->nullOnDelete(); // FK ID_Colaborador
+                  ->constrained('users')->nullOnDelete(); // FK ID_Colaborador
             $table->foreignId('proyecto_id')->constrained('proyectos')->cascadeOnDelete();
             $table->decimal('monto', 15, 2);
             $table->dateTime('fecha_aportacion')->useCurrent();
