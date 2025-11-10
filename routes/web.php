@@ -17,6 +17,10 @@ Route::get('/admin', [\App\Http\Controllers\AdminController::class, 'index'])
     ->middleware(['auth','role:ADMIN'])
     ->name('admin.dashboard');
 
+Route::patch('/admin/users/{user}/roles', [\App\Http\Controllers\AdminController::class, 'updateUserRoles'])
+    ->middleware(['auth','role:ADMIN'])
+    ->name('admin.users.roles');
+
 // Panel de AUDITOR
 Route::get('/auditor', [\App\Http\Controllers\AuditorController::class, 'index'])
     ->middleware(['auth','role:AUDITOR'])
