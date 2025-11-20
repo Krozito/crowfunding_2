@@ -55,6 +55,22 @@ Route::get('/creator', [\App\Http\Controllers\CreatorController::class, 'index']
     ->middleware(['auth','role:CREADOR'])
     ->name('creador.dashboard');
 
+Route::get('/creator/proyectos', [\App\Http\Controllers\CreatorController::class, 'proyectos'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proyectos');
+
+Route::get('/creator/recompensas', [\App\Http\Controllers\CreatorController::class, 'recompensas'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.recompensas');
+
+Route::get('/creator/avances', [\App\Http\Controllers\CreatorController::class, 'avances'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.avances');
+
+Route::get('/creator/fondos', [\App\Http\Controllers\CreatorController::class, 'fondos'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.fondos');
+
 // Panel de COLABORADOR
 Route::get('/colaborador', [\App\Http\Controllers\ColaboradorController::class, 'index'])
     ->middleware(['auth','role:COLABORADOR'])
