@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Panel de Administración | CrowdUp</title>
-    <meta name="description" content="Administra roles, módulos clave y monitorea la operación de CrowdUp.">
+    <title>Panel de Administracion | CrowdUp</title>
+    <meta name="description" content="Administra roles, modulos clave y monitorea la operacion de CrowdUp.">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -22,7 +22,7 @@
             </a>
             <nav class="hidden gap-8 text-sm text-zinc-300 md:flex">
                 <a href="#overview" class="hover:text-white">Overview</a>
-                <a href="#modules" class="hover:text-white">Módulos</a>
+                <a href="#roles" class="hover:text-white">Roles</a>
                 <a href="#roadmap" class="hover:text-white">Roadmap</a>
             </nav>
             <div class="flex items-center gap-3">
@@ -43,153 +43,157 @@
     </header>
 
     <main class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <section id="overview" class="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-10 shadow-2xl">
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.25),_transparent_45%)]"></div>
-            <div class="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/70">Panel estratégico</p>
-                    <h1 class="mt-3 text-4xl font-black text-white">Administración centralizada</h1>
-                    <p class="mt-4 max-w-2xl text-lg text-white/80">
-                        Accede a módulos especializados: roles, proyectos, auditorías, finanzas, proveedores y reportes. Diseñado para control granular y escalabilidad.
-                    </p>
+        <div class="grid gap-8 lg:grid-cols-[280px_1fr]">
+            <aside class="space-y-6 lg:sticky lg:top-24">
+                <div class="rounded-2xl border border-white/10 bg-zinc-900/70 shadow-xl">
+                    <div class="px-4 py-3">
+                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Panel</p>
+                        <p class="text-sm text-zinc-200">Mapa rapido de secciones</p>
+                    </div>
+                    <nav class="divide-y divide-white/5">
+                        <a href="#overview" class="group flex items-center justify-between px-4 py-3 text-sm text-zinc-200 hover:bg-white/5 hover:text-white">
+                            <span class="flex items-center gap-2">
+                                <span class="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-200">O</span>
+                                Vision general
+                            </span>
+                            <span class="text-xs text-zinc-500 group-hover:text-indigo-200">Resumen</span>
+                        </a>
+                        <a href="#roles" class="group flex items-center justify-between px-4 py-3 text-sm text-zinc-200 hover:bg-white/5 hover:text-white">
+                            <span class="flex items-center gap-2">
+                                <span class="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-200">R</span>
+                                Distribucion de roles
+                            </span>
+                            <span class="text-xs text-zinc-500 group-hover:text-indigo-200">Usuarios</span>
+                        </a>
+                        <a href="#roadmap" class="group flex items-center justify-between px-4 py-3 text-sm text-zinc-200 hover:bg-white/5 hover:text-white">
+                            <span class="flex items-center gap-2">
+                                <span class="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-200">H</span>
+                                Hoja de ruta
+                            </span>
+                            <span class="text-xs text-zinc-500 group-hover:text-indigo-200">Proximos</span>
+                        </a>
+                    </nav>
                 </div>
-                <div class="grid gap-4 rounded-2xl bg-white/10 p-6 text-white backdrop-blur">
-                    <div>
-                        <p class="text-xs uppercase tracking-[0.3em] text-white/70">Usuarios totales</p>
-                        <p class="text-3xl font-bold">{{ $totalUsers }}</p>
+
+                <div class="rounded-2xl border border-white/10 bg-zinc-900/70 shadow-xl">
+                    <div class="px-4 py-3">
+                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Modulos</p>
+                        <p class="text-sm text-zinc-200">Accesos laterales</p>
                     </div>
-                    <div class="border-t border-white/10 pt-4">
-                        <p class="text-xs uppercase tracking-[0.3em] text-white/70">Identidad verificada</p>
-                        <p class="text-3xl font-bold">{{ $verifiedUsers }}</p>
-                    </div>
+                    <nav class="divide-y divide-white/5">
+                        <a href="{{ route('admin.roles') }}" class="flex items-center justify-between px-4 py-3 text-sm text-zinc-200 hover:bg-white/5 hover:text-white">
+                            <span class="flex items-center gap-2">
+                                <span class="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-200">R</span>
+                                Roles y usuarios
+                            </span>
+                            <span class="text-xs text-indigo-200">Ir</span>
+                        </a>
+                        <a href="{{ route('admin.proyectos') }}" class="flex items-center justify-between px-4 py-3 text-sm text-zinc-200 hover:bg-white/5 hover:text-white">
+                            <span class="flex items-center gap-2">
+                                <span class="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-200">P</span>
+                                Proyectos
+                            </span>
+                            <span class="text-xs text-indigo-200">Ir</span>
+                        </a>
+                        <a href="{{ route('admin.auditorias') }}" class="flex items-center justify-between px-4 py-3 text-sm text-zinc-200 hover:bg-white/5 hover:text-white">
+                            <span class="flex items-center gap-2">
+                                <span class="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-200">A</span>
+                                Auditorias y cumplimiento
+                            </span>
+                            <span class="text-xs text-indigo-200">Ir</span>
+                        </a>
+                        <a href="{{ route('admin.finanzas') }}" class="flex items-center justify-between px-4 py-3 text-sm text-zinc-200 hover:bg-white/5 hover:text-white">
+                            <span class="flex items-center gap-2">
+                                <span class="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-200">F</span>
+                                Finanzas
+                            </span>
+                            <span class="text-xs text-indigo-200">Ir</span>
+                        </a>
+                        <a href="{{ route('admin.proveedores') }}" class="flex items-center justify-between px-4 py-3 text-sm text-zinc-200 hover:bg-white/5 hover:text-white">
+                            <span class="flex items-center gap-2">
+                                <span class="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-200">V</span>
+                                Proveedores
+                            </span>
+                            <span class="text-xs text-indigo-200">Ir</span>
+                        </a>
+                        <a href="{{ route('admin.reportes') }}" class="flex items-center justify-between px-4 py-3 text-sm text-zinc-200 hover:bg-white/5 hover:text-white">
+                            <span class="flex items-center gap-2">
+                                <span class="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-200">R</span>
+                                Reportes y analytics
+                            </span>
+                            <span class="text-xs text-indigo-200">Ir</span>
+                        </a>
+                    </nav>
                 </div>
+            </aside>
+
+            <div class="space-y-10">
+                <section id="overview" class="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-10 shadow-2xl">
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.25),_transparent_45%)]"></div>
+                    <div class="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/70">Panel estrategico</p>
+                            <h1 class="mt-3 text-4xl font-black text-white">Administracion centralizada</h1>
+                            <p class="mt-4 max-w-2xl text-lg text-white/80">
+                                Accede a modulos especializados: roles, proyectos, auditorias, finanzas, proveedores y reportes. Disenado para control granular y escalabilidad.
+                            </p>
+                        </div>
+                        <div class="grid gap-4 rounded-2xl bg-white/10 p-6 text-white backdrop-blur">
+                            <div>
+                                <p class="text-xs uppercase tracking-[0.3em] text-white/70">Usuarios totales</p>
+                                <p class="text-3xl font-bold">{{ $totalUsers }}</p>
+                            </div>
+                            <div class="border-t border-white/10 pt-4">
+                                <p class="text-xs uppercase tracking-[0.3em] text-white/70">Identidad verificada</p>
+                                <p class="text-3xl font-bold">{{ $verifiedUsers }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="roles" class="grid gap-6 lg:grid-cols-3">
+                    @foreach ($roleStats as $roleStat)
+                        <article class="rounded-2xl border border-white/10 bg-zinc-900/80 p-6 shadow-xl">
+                            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-zinc-400">{{ $roleStat->nombre_rol }}</p>
+                            <p class="mt-3 text-4xl font-black text-white">{{ $roleStat->users_count }}</p>
+                            <p class="mt-2 text-sm text-zinc-400">Usuarios activos con este rol</p>
+                        </article>
+                    @endforeach
+                </section>
+
+                <section id="roadmap">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">Hoja de ruta</p>
+                            <h3 class="mt-2 text-2xl font-bold text-white">Proximas capacidades para administracion</h3>
+                        </div>
+                    </div>
+                    <div class="mt-6 grid gap-6 md:grid-cols-3">
+                        <article class="rounded-2xl border border-white/10 bg-zinc-900/80 p-6">
+                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Prioridad 1</p>
+                            <h4 class="mt-2 text-lg font-semibold text-white">Moderacion de usuarios</h4>
+                            <p class="mt-3 text-sm text-zinc-400">
+                                KYC mejorado, seguimiento de verificaciones (HU1, HU3) y control granular de permisos (HU2).
+                            </p>
+                        </article>
+                        <article class="rounded-2xl border border-white/10 bg-zinc-900/80 p-6">
+                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-fuchsia-300">Prioridad 2</p>
+                            <h4 class="mt-2 text-lg font-semibold text-white">Supervision financiera</h4>
+                            <p class="mt-3 text-sm text-zinc-400">
+                                Metricas de proyectos, auditorias y liberacion de fondos (epicas 4, 5 y 8).
+                            </p>
+                        </article>
+                        <article class="rounded-2xl border border-white/10 bg-zinc-900/80 p-6">
+                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300">Prioridad 3</p>
+                            <h4 class="mt-2 text-lg font-semibold text-white">Cumplimiento &amp; reportes</h4>
+                            <p class="mt-3 text-sm text-zinc-400">
+                                Herramientas de AML/KYC, reportes fiscales y monitoreo de proveedores (epicas 9 y 10).
+                            </p>
+                        </article>
+                    </div>
+                </section>
             </div>
-        </section>
-
-        <section class="mt-10 grid gap-6 lg:grid-cols-3">
-            @foreach ($roleStats as $roleStat)
-                <article class="rounded-2xl border border-white/10 bg-zinc-900/80 p-6 shadow-xl">
-                    <p class="text-sm font-semibold uppercase tracking-[0.3em] text-zinc-400">{{ $roleStat->nombre_rol }}</p>
-                    <p class="mt-3 text-4xl font-black text-white">{{ $roleStat->users_count }}</p>
-                    <p class="mt-2 text-sm text-zinc-400">Usuarios activos con este rol</p>
-                </article>
-            @endforeach
-        </section>
-
-        <section id="modules" class="mt-12">
-            <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">Módulos operativos</p>
-                    <h2 class="mt-2 text-2xl font-bold text-white">Gestiona cada área sin saturar el panel</h2>
-                    <p class="mt-2 text-sm text-zinc-400">Accesos rápidos a vistas dedicadas para cada rol y operación crítica.</p>
-                </div>
-            </div>
-            <div class="mt-6 grid gap-6 md:grid-cols-3">
-                <a href="{{ route('admin.roles') }}" class="group rounded-2xl border border-white/10 bg-zinc-900/70 p-6 shadow-lg hover:border-indigo-400/60">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-white">Roles &amp; usuarios</h3>
-                        <span class="rounded-full bg-indigo-600/20 px-3 py-1 text-xs font-semibold text-indigo-200">Acceso</span>
-                    </div>
-                    <p class="mt-3 text-sm text-zinc-400">Asigna, revoca y audita permisos para todos los perfiles.</p>
-                    <div class="mt-4 flex items-center gap-2 text-indigo-300 text-sm font-semibold">
-                        Ir al módulo
-                        <span aria-hidden="true" class="transition group-hover:translate-x-1">→</span>
-                    </div>
-                </a>
-
-                <a href="{{ route('admin.proyectos') }}" class="group rounded-2xl border border-white/10 bg-zinc-900/70 p-6 shadow-lg hover:border-indigo-400/60">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-white">Proyectos</h3>
-                        <span class="rounded-full bg-indigo-600/20 px-3 py-1 text-xs font-semibold text-indigo-200">Control</span>
-                    </div>
-                    <p class="mt-3 text-sm text-zinc-400">Monitoring de campañas, estados, hitos y verificaciones.</p>
-                    <div class="mt-4 flex items-center gap-2 text-indigo-300 text-sm font-semibold">
-                        Ir al módulo
-                        <span aria-hidden="true" class="transition group-hover:translate-x-1">→</span>
-                    </div>
-                </a>
-
-                <a href="{{ route('admin.auditorias') }}" class="group rounded-2xl border border-white/10 bg-zinc-900/70 p-6 shadow-lg hover:border-indigo-400/60">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-white">Auditoría &amp; cumplimiento</h3>
-                        <span class="rounded-full bg-indigo-600/20 px-3 py-1 text-xs font-semibold text-indigo-200">Revisión</span>
-                    </div>
-                    <p class="mt-3 text-sm text-zinc-400">Revisión de gastos, KYC/AML y trazabilidad de fondos.</p>
-                    <div class="mt-4 flex items-center gap-2 text-indigo-300 text-sm font-semibold">
-                        Ir al módulo
-                        <span aria-hidden="true" class="transition group-hover:translate-x-1">→</span>
-                    </div>
-                </a>
-
-                <a href="{{ route('admin.finanzas') }}" class="group rounded-2xl border border-white/10 bg-zinc-900/70 p-6 shadow-lg hover:border-indigo-400/60">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-white">Finanzas</h3>
-                        <span class="rounded-full bg-indigo-600/20 px-3 py-1 text-xs font-semibold text-indigo-200">Custodia</span>
-                    </div>
-                    <p class="mt-3 text-sm text-zinc-400">Fondos en escrow, desembolsos y modelos de financiamiento.</p>
-                    <div class="mt-4 flex items-center gap-2 text-indigo-300 text-sm font-semibold">
-                        Ir al módulo
-                        <span aria-hidden="true" class="transition group-hover:translate-x-1">→</span>
-                    </div>
-                </a>
-
-                <a href="{{ route('admin.proveedores') }}" class="group rounded-2xl border border-white/10 bg-zinc-900/70 p-6 shadow-lg hover:border-indigo-400/60">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-white">Proveedores</h3>
-                        <span class="rounded-full bg-indigo-600/20 px-3 py-1 text-xs font-semibold text-indigo-200">Red</span>
-                    </div>
-                    <p class="mt-3 text-sm text-zinc-400">Directorio, contratos y performance de proveedores.</p>
-                    <div class="mt-4 flex items-center gap-2 text-indigo-300 text-sm font-semibold">
-                        Ir al módulo
-                        <span aria-hidden="true" class="transition group-hover:translate-x-1">→</span>
-                    </div>
-                </a>
-
-                <a href="{{ route('admin.reportes') }}" class="group rounded-2xl border border-white/10 bg-zinc-900/70 p-6 shadow-lg hover:border-indigo-400/60">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-white">Reportes &amp; analytics</h3>
-                        <span class="rounded-full bg-indigo-600/20 px-3 py-1 text-xs font-semibold text-indigo-200">Insights</span>
-                    </div>
-                    <p class="mt-3 text-sm text-zinc-400">KPIs operativos, trazabilidad y métricas de éxito.</p>
-                    <div class="mt-4 flex items-center gap-2 text-indigo-300 text-sm font-semibold">
-                        Ir al módulo
-                        <span aria-hidden="true" class="transition group-hover:translate-x-1">→</span>
-                    </div>
-                </a>
-            </div>
-        </section>
-
-        <section id="roadmap" class="mt-12">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">Hoja de ruta</p>
-                    <h3 class="mt-2 text-2xl font-bold text-white">Próximas capacidades para administración</h3>
-                </div>
-            </div>
-            <div class="mt-6 grid gap-6 md:grid-cols-3">
-                <article class="rounded-2xl border border-white/10 bg-zinc-900/80 p-6">
-                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Prioridad 1</p>
-                    <h4 class="mt-2 text-lg font-semibold text-white">Moderación de usuarios</h4>
-                    <p class="mt-3 text-sm text-zinc-400">
-                        KYC mejorado, seguimiento de verificaciones (HU1, HU3) y control granular de permisos (HU2).
-                    </p>
-                </article>
-                <article class="rounded-2xl border border-white/10 bg-zinc-900/80 p-6">
-                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-fuchsia-300">Prioridad 2</p>
-                    <h4 class="mt-2 text-lg font-semibold text-white">Supervisión financiera</h4>
-                    <p class="mt-3 text-sm text-zinc-400">
-                        Métricas de proyectos, auditorías y liberación de fondos (Épicas 4, 5 y 8).
-                    </p>
-                </article>
-                <article class="rounded-2xl border border-white/10 bg-zinc-900/80 p-6">
-                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300">Prioridad 3</p>
-                    <h4 class="mt-2 text-lg font-semibold text-white">Cumplimiento &amp; reportes</h4>
-                    <p class="mt-3 text-sm text-zinc-400">
-                        Herramientas de AML/KYC, reportes fiscales y monitoreo de proveedores (Épicas 9 y 10).
-                    </p>
-                </article>
-            </div>
-        </section>
+        </div>
     </main>
 </body>
 </html>
