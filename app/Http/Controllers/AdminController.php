@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use App\Models\Proyecto;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -47,7 +48,9 @@ class AdminController extends Controller
 
     public function proyectos(): View
     {
-        return view('admin.modules.proyectos');
+        $proyectos = Proyecto::orderByDesc('created_at')->paginate(10);
+
+        return view('admin.modules.proyectos', compact('proyectos'));
     }
 
     public function auditorias(): View
