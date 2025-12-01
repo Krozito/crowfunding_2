@@ -8,8 +8,8 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen">
     <div class="relative isolate overflow-hidden">
-        <div class="absolute -left-20 top-0 h-64 w-64 rounded-full bg-indigo-600/30 blur-3xl"></div>
-        <div class="absolute right-0 top-24 h-64 w-64 rounded-full bg-fuchsia-500/20 blur-3xl"></div>
+        <div class="absolute -left-32 top-0 h-72 w-72 rounded-full bg-indigo-600/25 blur-3xl"></div>
+        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-fuchsia-500/15 blur-3xl"></div>
     </div>
 
     <header class="sticky top-0 z-30 border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl">
@@ -27,13 +27,21 @@
         </div>
     </header>
 
-    <main class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 space-y-6">
-        <section class="rounded-3xl border border-white/10 bg-zinc-900/70 p-8 shadow-2xl">
-            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Monitor</p>
-            <h2 class="mt-2 text-2xl font-bold text-white">Supervision de proyectos</h2>
-            <p class="mt-2 text-sm text-zinc-400">
-                Publica, valida y revisa campañas activas. Esta tabla muestra los proyectos mas recientes.
-            </p>
+    <main class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 space-y-6 relative">
+        <section class="rounded-3xl border border-white/10 bg-gradient-to-r from-zinc-900/80 via-zinc-900/70 to-indigo-950/40 p-8 shadow-2xl">
+            <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Monitor</p>
+                    <h2 class="mt-1 text-2xl font-bold text-white">Supervision de proyectos</h2>
+                    <p class="mt-2 text-sm text-zinc-400">
+                        Publica, valida y revisa proyectos activos. Selecciona un proyecto para ver sus detalles.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs text-zinc-300">
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600/20 text-indigo-200 font-bold">{{ $proyectos->total() }}</span>
+                    proyectos listados
+                </div>
+            </div>
 
             <div class="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
                 <div class="overflow-x-auto">
@@ -47,11 +55,12 @@
                                 <th class="px-4 py-3 text-left">Recaudado</th>
                                 <th class="px-4 py-3 text-left">Limite</th>
                                 <th class="px-4 py-3 text-left">Ubicacion</th>
+                                <th class="px-4 py-3 text-left">Detalle</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-white/5">
                             @forelse ($proyectos as $proyecto)
-                                <tr class="hover:bg-white/5">
+                                <tr class="hover:bg-white/5 transition">
                                     <td class="px-4 py-3 font-semibold text-white">{{ $proyecto->titulo }}</td>
                                     <td class="px-4 py-3">
                                         <span class="inline-flex items-center rounded-full bg-indigo-500/15 px-2.5 py-1 text-xs font-semibold text-indigo-200">
@@ -65,10 +74,15 @@
                                         {{ optional($proyecto->fecha_limite)->format('d/m/Y') ?? 'Sin fecha' }}
                                     </td>
                                     <td class="px-4 py-3 text-zinc-300">{{ $proyecto->ubicacion_geografica ?? 'N/D' }}</td>
+                                    <td class="px-4 py-3">
+                                        <a href="{{ route('admin.proyectos.show', $proyecto) }}" class="inline-flex items-center gap-1 text-indigo-200 hover:text-white text-xs font-semibold">
+                                            Ver detalle <span aria-hidden="true">→</span>
+                                        </a>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-4 py-6 text-center text-zinc-400">
+                                    <td colspan="8" class="px-4 py-6 text-center text-zinc-400">
                                         No hay proyectos cargados aun.
                                     </td>
                                 </tr>

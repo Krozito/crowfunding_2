@@ -31,4 +31,14 @@ class Proyecto extends Model
         'cronograma' => 'array',
         'presupuesto' => 'array',
     ];
+
+    public function creador()
+    {
+        return $this->belongsTo(User::class, 'creador_id');
+    }
+
+    public function aportaciones()
+    {
+        return $this->hasMany(Aportacion::class, 'proyecto_id');
+    }
 }

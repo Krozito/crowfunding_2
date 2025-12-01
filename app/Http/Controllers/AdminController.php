@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\Proyecto;
+use App\Models\Aportacion;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class AdminController extends Controller
@@ -51,6 +53,41 @@ class AdminController extends Controller
         $proyectos = Proyecto::orderByDesc('created_at')->paginate(10);
 
         return view('admin.modules.proyectos', compact('proyectos'));
+    }
+
+    public function showProyecto(Proyecto $proyecto): View
+    {
+        $proyecto->load('creador');
+
+        $aporteQuery = Aportacion::where('proyecto_id', $proyecto->id);
+
+        $topInversionistas = (clone $aporteQuery)
+            ->select('colaborador_id', DB::raw('SUM(monto) as total'), DB::raw('COUNT(*) as aportes'))
+            ->whereNotNull('colaborador_id')
+            ->groupBy('colaborador_id')
+            ->orderByDesc('total')
+            ->with('colaborador')
+            ->take(5)
+            ->get();
+
+        $aportacionesRecientes = (clone $aporteQuery)
+            ->with('colaborador')
+            ->orderByDesc('fecha_aportacion')
+            ->take(8)
+            ->get();
+
+        $stats = [
+            'total_recaudado' => (clone $aporteQuery)->sum('monto'),
+            'aportaciones' => (clone $aporteQuery)->count(),
+            'colaboradores' => (clone $aporteQuery)->distinct('colaborador_id')->count('colaborador_id'),
+        ];
+
+        return view('admin.modules.proyectos-show', [
+            'proyecto' => $proyecto,
+            'topInversionistas' => $topInversionistas,
+            'aportacionesRecientes' => $aportacionesRecientes,
+            'stats' => $stats,
+        ]);
     }
 
     public function auditorias(): View
