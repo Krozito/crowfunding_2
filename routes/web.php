@@ -29,6 +29,10 @@ Route::get('/admin/proyectos', [\App\Http\Controllers\AdminController::class, 'p
     ->middleware(['auth','role:ADMIN'])
     ->name('admin.proyectos');
 
+Route::get('/admin/proyectos/{proyecto}', [\App\Http\Controllers\AdminController::class, 'showProyecto'])
+    ->middleware(['auth','role:ADMIN'])
+    ->name('admin.proyectos.show');
+
 Route::get('/admin/auditorias', [\App\Http\Controllers\AdminController::class, 'auditorias'])
     ->middleware(['auth','role:ADMIN'])
     ->name('admin.auditorias');
