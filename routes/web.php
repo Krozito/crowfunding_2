@@ -91,6 +91,27 @@ Route::get('/creator/reportes', [\App\Http\Controllers\CreatorController::class,
     ->middleware(['auth','role:CREADOR'])
     ->name('creador.reportes');
 
+// Acciones de creador (simples)
+Route::post('/creator/proyectos', [\App\Http\Controllers\CreatorController::class, 'storeProyecto'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proyectos.store');
+
+Route::patch('/creator/proyectos/{proyecto}', [\App\Http\Controllers\CreatorController::class, 'updateProyecto'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proyectos.update');
+
+Route::post('/creator/proyectos/{proyecto}/avances', [\App\Http\Controllers\CreatorController::class, 'agregarAvance'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proyectos.avances');
+
+Route::post('/creator/proveedores', [\App\Http\Controllers\CreatorController::class, 'storeProveedor'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proveedores.store');
+
+Route::patch('/creator/perfil', [\App\Http\Controllers\CreatorController::class, 'updatePerfil'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.perfil.update');
+
 // Panel de COLABORADOR
 Route::get('/colaborador', [\App\Http\Controllers\ColaboradorController::class, 'index'])
     ->middleware(['auth','role:COLABORADOR'])
