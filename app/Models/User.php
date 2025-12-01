@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Proyecto;
+use App\Models\Aportacion;
 
 class User extends Authenticatable
 {
@@ -50,6 +52,16 @@ class User extends Authenticatable
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'usuario_rol', 'user_id', 'rol_id');
+    }
+
+    public function proyectosCreados()
+    {
+        return $this->hasMany(Proyecto::class, 'creador_id');
+    }
+
+    public function aportaciones()
+    {
+        return $this->hasMany(Aportacion::class, 'colaborador_id');
     }
 
     /**

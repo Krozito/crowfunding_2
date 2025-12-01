@@ -26,12 +26,75 @@ class AdminController extends Controller
         ]);
     }
 
-    public function roles(): View
+    public function roles(Request $request): View
     {
-        $users = User::with('roles')->orderBy('name')->get();
+        $search = $request->query('q');
+        $roleFilter = $request->query('role');
+
+        $usersQuery = User::with('roles')->orderBy('name');
+
+        if ($search) {
+            $usersQuery->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('nombre_completo', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($roleFilter) {
+            $usersQuery->whereHas('roles', function ($q) use ($roleFilter) {
+                $q->where('id', $roleFilter);
+            });
+        }
+
+        $users = $usersQuery->paginate(12)->withQueryString();
         $roles = Role::orderBy('nombre_rol')->get();
 
-        return view('admin.modules.roles', compact('users', 'roles'));
+        return view('admin.modules.roles', [
+            'users' => $users,
+            'roles' => $roles,
+            'search' => $search,
+            'roleFilter' => $roleFilter,
+        ]);
+    }
+
+    public function showUser(User $user): View
+    {
+        $user->load(['roles', 'proyectosCreados' => function ($q) {
+            $q->orderByDesc('created_at');
+        }]);
+
+        $aportaciones = $user->aportaciones()->with('proyecto')->orderByDesc('fecha_aportacion')->get();
+
+        $stats = [
+            'total_aportado' => $aportaciones->sum('monto'),
+            'aportaciones' => $aportaciones->count(),
+            'proyectos_apoyados' => $aportaciones->pluck('proyecto_id')->unique()->count(),
+        ];
+
+        $topProyectos = $aportaciones
+            ->groupBy('proyecto_id')
+            ->map(function ($group) {
+                return [
+                    'proyecto' => $group->first()->proyecto,
+                    'total' => $group->sum('monto'),
+                    'aportes' => $group->count(),
+                ];
+            })
+            ->sortByDesc('total')
+            ->take(5);
+
+        $calificacion = DB::table('calificaciones')
+            ->where('colaborador_id', $user->id)
+            ->avg('puntaje');
+
+        return view('admin.modules.usuarios-show', [
+            'user' => $user,
+            'aportaciones' => $aportaciones,
+            'stats' => $stats,
+            'topProyectos' => $topProyectos,
+            'calificacion' => $calificacion,
+        ]);
     }
 
     public function updateUserRoles(Request $request, User $user): RedirectResponse

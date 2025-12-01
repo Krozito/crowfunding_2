@@ -21,6 +21,10 @@ Route::get('/admin/roles', [\App\Http\Controllers\AdminController::class, 'roles
     ->middleware(['auth','role:ADMIN'])
     ->name('admin.roles');
 
+Route::get('/admin/users/{user}', [\App\Http\Controllers\AdminController::class, 'showUser'])
+    ->middleware(['auth','role:ADMIN'])
+    ->name('admin.users.show');
+
 Route::patch('/admin/users/{user}/roles', [\App\Http\Controllers\AdminController::class, 'updateUserRoles'])
     ->middleware(['auth','role:ADMIN'])
     ->name('admin.users.roles');
