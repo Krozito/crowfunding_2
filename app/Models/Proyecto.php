@@ -24,6 +24,7 @@ class Proyecto extends Model
         'modelo_financiamiento',
         'categoria',
         'ubicacion_geografica',
+        'imagen_portada',
     ];
 
     protected $casts = [

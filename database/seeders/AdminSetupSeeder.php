@@ -11,22 +11,43 @@ class AdminSetupSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1) Crear rol ADMIN si no existe
+        // Crear roles base
         $adminRole = Role::firstOrCreate(['nombre_rol' => 'ADMIN']);
+        $auditorRole = Role::firstOrCreate(['nombre_rol' => 'AUDITOR']);
+        $creadorRole = Role::firstOrCreate(['nombre_rol' => 'CREADOR']);
+        $colabRole = Role::firstOrCreate(['nombre_rol' => 'COLABORADOR']);
 
-        // 2) Crear (o actualizar) usuario admin
+        // Usuario admin
         $admin = User::firstOrCreate(
             ['email' => 'admin@app.test'],
             [
                 'name' => 'Administrador',
                 'nombre_completo' => 'Administrador',
-                'password' => Hash::make('secret'), // cámbialo en prod
+                'password' => Hash::make('secret'), // cambialo en prod
                 'estado_verificacion' => true,
                 'indice_confianza' => 100,
             ]
         );
-
-        // 3) Vincular rol ADMIN en pivot `usuario_rol` (user_id, rol_id)
         $admin->roles()->syncWithoutDetaching([$adminRole->id]);
+
+        // Usuarios demo por rol
+        $this->createUserWithRole('auditor@app.test', 'Auditor Demo', $auditorRole);
+        $this->createUserWithRole('creador@app.test', 'Creador Demo', $creadorRole);
+        $this->createUserWithRole('colaborador@app.test', 'Colaborador Demo', $colabRole);
+    }
+
+    private function createUserWithRole(string $email, string $name, Role $role): void
+    {
+        $user = User::firstOrCreate(
+            ['email' => $email],
+            [
+                'name' => $name,
+                'nombre_completo' => $name,
+                'password' => Hash::make('secret'),
+                'estado_verificacion' => true,
+                'indice_confianza' => 80,
+            ]
+        );
+        $user->roles()->syncWithoutDetaching([$role->id]);
     }
 }
