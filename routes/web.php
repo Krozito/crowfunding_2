@@ -83,6 +83,14 @@ Route::get('/creator/proveedores', [\App\Http\Controllers\CreatorController::cla
     ->middleware(['auth','role:CREADOR'])
     ->name('creador.proveedores');
 
+Route::get('/creator/proveedores/crear', [\App\Http\Controllers\CreatorController::class, 'crearProveedor'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proveedores.create');
+
+Route::get('/creator/proveedores/{proveedor}/editar', [\App\Http\Controllers\CreatorController::class, 'editarProveedor'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proveedores.edit');
+
 Route::get('/creator/perfil', [\App\Http\Controllers\CreatorController::class, 'perfil'])
     ->middleware(['auth','role:CREADOR'])
     ->name('creador.perfil');
@@ -107,6 +115,10 @@ Route::post('/creator/proyectos/{proyecto}/avances', [\App\Http\Controllers\Crea
 Route::post('/creator/proveedores', [\App\Http\Controllers\CreatorController::class, 'storeProveedor'])
     ->middleware(['auth','role:CREADOR'])
     ->name('creador.proveedores.store');
+
+Route::patch('/creator/proveedores/{proveedor}', [\App\Http\Controllers\CreatorController::class, 'updateProveedor'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proveedores.update');
 
 Route::patch('/creator/perfil', [\App\Http\Controllers\CreatorController::class, 'updatePerfil'])
     ->middleware(['auth','role:CREADOR'])

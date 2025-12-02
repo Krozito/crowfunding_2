@@ -63,9 +63,49 @@ class CreatorController extends Controller
         return view('creator.modules.fondos');
     }
 
-    public function proveedores(): View
+    public function proveedores(Request $request): View
     {
-        return view('creator.modules.proveedores');
+        $userId = auth()->id();
+        $proyectos = Proyecto::where('creador_id', $userId)->get();
+        $search = $request->query('q');
+        $proyectoFiltro = $request->query('proyecto');
+
+        $proveedoresQuery = Proveedor::with('proyecto')
+            ->where('creador_id', $userId)
+            ->latest();
+
+        if ($search) {
+            $proveedoresQuery->where(function ($q) use ($search) {
+                $q->where('nombre_proveedor', 'like', "%{$search}%")
+                  ->orWhere('especialidad', 'like', "%{$search}%")
+                  ->orWhere('info_contacto', 'like', "%{$search}%");
+            });
+        }
+
+        if ($proyectoFiltro) {
+            $proveedoresQuery->where('proyecto_id', $proyectoFiltro);
+        }
+
+        $proveedores = $proveedoresQuery->paginate(10)->withQueryString();
+        $totalProveedores = Proveedor::where('creador_id', $userId)->count();
+
+        return view('creator.modules.proveedores', compact('proyectos', 'proveedores', 'search', 'proyectoFiltro', 'totalProveedores'));
+    }
+
+    public function crearProveedor(): View
+    {
+        $userId = auth()->id();
+        $proyectos = Proyecto::where('creador_id', $userId)->get();
+
+        return view('creator.modules.proveedores-create', compact('proyectos'));
+    }
+
+    public function editarProveedor(Proveedor $proveedor): View
+    {
+        abort_unless($proveedor->creador_id === auth()->id(), 403);
+        $proyectos = Proyecto::where('creador_id', auth()->id())->get();
+
+        return view('creator.modules.proveedores-edit', compact('proveedor', 'proyectos'));
     }
 
     public function perfil(): View
@@ -194,6 +234,32 @@ class CreatorController extends Controller
         ]);
 
         return redirect()->back()->with('status', 'Proveedor registrado.');
+    }
+
+    public function updateProveedor(Request $request, Proveedor $proveedor): RedirectResponse
+    {
+        abort_unless($proveedor->creador_id === $request->user()->id, 403);
+
+        $validated = $request->validate([
+            'nombre_proveedor' => ['required', 'string', 'max:255'],
+            'proyecto_id' => ['nullable', 'exists:proyectos,id'],
+            'info_contacto' => ['nullable', 'string'],
+            'especialidad' => ['nullable', 'string', 'max:120'],
+        ]);
+
+        if (!empty($validated['proyecto_id'])) {
+            $proyecto = Proyecto::find($validated['proyecto_id']);
+            abort_unless($proyecto && $proyecto->creador_id === $request->user()->id, 403);
+        }
+
+        $proveedor->update([
+            'nombre_proveedor' => $validated['nombre_proveedor'],
+            'proyecto_id' => $validated['proyecto_id'] ?? null,
+            'info_contacto' => $validated['info_contacto'] ?? null,
+            'especialidad' => $validated['especialidad'] ?? null,
+        ]);
+
+        return redirect()->route('creador.proveedores')->with('status', 'Proveedor actualizado.');
     }
 
     public function updatePerfil(Request $request): RedirectResponse
