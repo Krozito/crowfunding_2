@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ActualizacionProyecto;
 use App\Models\Aportacion;
 use App\Models\Proveedor;
+use App\Models\ProveedorHistorial;
 use App\Models\Proyecto;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -71,6 +72,7 @@ class CreatorController extends Controller
         $proyectoFiltro = $request->query('proyecto');
 
         $proveedoresQuery = Proveedor::with('proyecto')
+            ->withAvg('historiales as calificacion_promedio', 'calificacion')
             ->where('creador_id', $userId)
             ->latest();
 
@@ -106,6 +108,21 @@ class CreatorController extends Controller
         $proyectos = Proyecto::where('creador_id', auth()->id())->get();
 
         return view('creator.modules.proveedores-edit', compact('proveedor', 'proyectos'));
+    }
+
+    public function showProveedor(Proveedor $proveedor): View
+    {
+        abort_unless($proveedor->creador_id === auth()->id(), 403);
+        $proveedor->load('proyecto', 'historiales');
+        $proveedor->loadAvg('historiales as calificacion_promedio', 'calificacion');
+        $proyectos = Proyecto::where('creador_id', auth()->id())->get();
+        $proveedores = Proveedor::with('proyecto:id,titulo')
+            ->withAvg('historiales as calificacion_promedio', 'calificacion')
+            ->where('creador_id', auth()->id())
+            ->latest()
+            ->get(['id', 'nombre_proveedor', 'proyecto_id']);
+
+        return view('creator.modules.proveedores-show', compact('proveedor', 'proyectos', 'proveedores'));
     }
 
     public function perfil(): View
@@ -260,6 +277,28 @@ class CreatorController extends Controller
         ]);
 
         return redirect()->route('creador.proveedores')->with('status', 'Proveedor actualizado.');
+    }
+
+    public function storeProveedorHistorial(Request $request, Proveedor $proveedor): RedirectResponse
+    {
+        abort_unless($proveedor->creador_id === $request->user()->id, 403);
+
+        $validated = $request->validate([
+            'concepto' => ['required', 'string', 'max:255'],
+            'monto' => ['required', 'numeric', 'min:0'],
+            'fecha_entrega' => ['nullable', 'date'],
+            'calificacion' => ['nullable', 'integer', 'min:1', 'max:10'],
+        ]);
+
+        ProveedorHistorial::create([
+            'proveedor_id' => $proveedor->id,
+            'concepto' => $validated['concepto'],
+            'monto' => $validated['monto'],
+            'fecha_entrega' => $validated['fecha_entrega'] ?? null,
+            'calificacion' => $validated['calificacion'] ?? null,
+        ]);
+
+        return redirect()->back()->with('status', 'Historial registrado.');
     }
 
     public function updatePerfil(Request $request): RedirectResponse

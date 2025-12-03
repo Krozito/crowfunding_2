@@ -91,6 +91,10 @@ Route::get('/creator/proveedores/{proveedor}/editar', [\App\Http\Controllers\Cre
     ->middleware(['auth','role:CREADOR'])
     ->name('creador.proveedores.edit');
 
+Route::get('/creator/proveedores/{proveedor}', [\App\Http\Controllers\CreatorController::class, 'showProveedor'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proveedores.show');
+
 Route::get('/creator/perfil', [\App\Http\Controllers\CreatorController::class, 'perfil'])
     ->middleware(['auth','role:CREADOR'])
     ->name('creador.perfil');
@@ -119,6 +123,10 @@ Route::post('/creator/proveedores', [\App\Http\Controllers\CreatorController::cl
 Route::patch('/creator/proveedores/{proveedor}', [\App\Http\Controllers\CreatorController::class, 'updateProveedor'])
     ->middleware(['auth','role:CREADOR'])
     ->name('creador.proveedores.update');
+
+Route::post('/creator/proveedores/{proveedor}/historial', [\App\Http\Controllers\CreatorController::class, 'storeProveedorHistorial'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proveedores.historial.store');
 
 Route::patch('/creator/perfil', [\App\Http\Controllers\CreatorController::class, 'updatePerfil'])
     ->middleware(['auth','role:CREADOR'])

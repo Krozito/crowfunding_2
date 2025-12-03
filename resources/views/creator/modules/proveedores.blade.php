@@ -66,14 +66,29 @@
             <div class="mt-6 grid gap-4">
                 @forelse ($proveedores as $prov)
                     <article class="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-inner ring-1 ring-emerald-500/10">
+                        @php
+                            $avg = $prov->calificacion_promedio;
+                            $avgBadge = $avg === null
+                                ? ['bg' => 'bg-zinc-500/15 text-zinc-200 border border-white/10', 'label' => 'Sin calificación']
+                                : ($avg < 5
+                                    ? ['bg' => 'bg-red-500/15 text-red-100 border border-red-500/20', 'label' => number_format($avg, 1) . '/10']
+                                    : ($avg == 5
+                                        ? ['bg' => 'bg-amber-400/15 text-amber-100 border border-amber-400/25', 'label' => number_format($avg, 1) . '/10']
+                                        : ['bg' => 'bg-emerald-500/15 text-emerald-200 border border-emerald-500/30', 'label' => number_format($avg, 1) . '/10']));
+                        @endphp
                         <div class="flex flex-wrap items-center justify-between gap-3">
                             <div>
                                 <p class="text-base font-semibold text-white">{{ $prov->nombre_proveedor }}</p>
                                 <p class="text-xs text-zinc-400">Especialidad: {{ $prov->especialidad ?? 'Sin especialidad' }}</p>
                             </div>
-                            <span class="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-200">
-                                Proyecto: {{ $prov->proyecto->titulo ?? 'Sin vincular' }}
-                            </span>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-200">
+                                    Proyecto: {{ $prov->proyecto->titulo ?? 'Sin vincular' }}
+                                </span>
+                                <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $avgBadge['bg'] }}">
+                                    Promedio: {{ $avgBadge['label'] }}
+                                </span>
+                            </div>
                         </div>
                         <div class="mt-3 grid gap-3 text-sm text-zinc-300 md:grid-cols-3">
                             <div class="rounded-xl border border-white/10 bg-zinc-900/60 px-3 py-2">
@@ -89,6 +104,9 @@
                                 <p class="font-medium text-white">#{{ $prov->id }}</p>
                             </div>
                             <div class="md:col-span-3 flex justify-end">
+                                <a href="{{ route('creador.proveedores.show', $prov) }}" class="inline-flex items-center gap-2 rounded-xl border border-white/10 px-3 py-2 text-xs font-semibold text-white hover:border-emerald-400/60 hover:text-emerald-100">
+                                    Ver historial
+                                </a>
                                 <a href="{{ route('creador.proveedores.edit', $prov) }}" class="inline-flex items-center gap-2 rounded-xl border border-white/10 px-3 py-2 text-xs font-semibold text-white hover:border-emerald-400/60 hover:text-emerald-100">
                                     Editar proveedor
                                 </a>

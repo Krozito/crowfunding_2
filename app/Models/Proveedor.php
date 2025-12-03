@@ -23,4 +23,9 @@ class Proveedor extends Model
     {
         return $this->belongsTo(Proyecto::class);
     }
+
+    public function historiales()
+    {
+        return $this->hasMany(ProveedorHistorial::class);
+    }
 }
