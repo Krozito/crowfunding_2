@@ -8,6 +8,7 @@ use App\Models\Proveedor;
 use App\Models\ProveedorHistorial;
 use App\Models\Proyecto;
 use App\Models\Recompensa;
+use App\Models\SolicitudDesembolso;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -184,9 +185,49 @@ class CreatorController extends Controller
         return view('creator.modules.avances', compact('proyectos', 'selectedProjectId', 'actualizaciones'));
     }
 
-    public function fondos(): View
+    public function fondos(Request $request): View
     {
-        return view('creator.modules.fondos');
+        $userId = auth()->id();
+        $proyectos = Proyecto::where('creador_id', $userId)->get();
+        $selectedProjectId = $request->query('proyecto') ?? $proyectos->first()?->id;
+
+        $solicitudes = collect();
+        $finanzas = [
+            'recaudado' => 0,
+            'retenido' => 0,
+            'liberado' => 0,
+            'gastado' => 0,
+            'pendiente' => 0,
+            'disponible' => 0,
+        ];
+
+        if ($selectedProjectId) {
+            $this->authorizeProyectoId($selectedProjectId, $userId);
+            $solicitudes = SolicitudDesembolso::where('proyecto_id', $selectedProjectId)
+                ->orderByDesc('created_at')
+                ->get();
+
+            $finanzas = $this->calcularFinanzasProyecto($selectedProjectId);
+        }
+
+        return view('creator.modules.fondos', compact('proyectos', 'selectedProjectId', 'solicitudes', 'finanzas'));
+    }
+
+    public function fondosHistorial(Request $request): View
+    {
+        $userId = auth()->id();
+        $proyectos = Proyecto::where('creador_id', $userId)->get();
+        $selectedProjectId = $request->query('proyecto') ?? $proyectos->first()?->id;
+
+        $solicitudes = collect();
+        if ($selectedProjectId) {
+            $this->authorizeProyectoId($selectedProjectId, $userId);
+            $solicitudes = SolicitudDesembolso::where('proyecto_id', $selectedProjectId)
+                ->orderByDesc('created_at')
+                ->get();
+        }
+
+        return view('creator.modules.fondos-historial', compact('proyectos', 'selectedProjectId', 'solicitudes'));
     }
 
     public function proveedores(Request $request): View
@@ -495,9 +536,68 @@ class CreatorController extends Controller
         return redirect()->back()->with('status', 'Perfil actualizado.');
     }
 
+    public function storeSolicitudDesembolso(Request $request, Proyecto $proyecto): RedirectResponse
+    {
+        $this->authorizeProyecto($proyecto, $request->user()->id);
+
+        $validated = $request->validate([
+            'monto_solicitado' => ['required', 'numeric', 'min:1'],
+            'hito' => ['required', 'string', 'max:160'],
+            'descripcion' => ['nullable', 'string'],
+            'proveedores' => ['nullable', 'string'],
+            'fecha_estimada' => ['nullable', 'date'],
+            'adjuntos.*' => ['nullable', 'file', 'max:8192'],
+        ]);
+
+        $existe = SolicitudDesembolso::where('proyecto_id', $proyecto->id)
+            ->where('hito', $validated['hito'])
+            ->where('estado', 'pendiente')
+            ->exists();
+
+        if ($existe) {
+            return redirect()->back()->withErrors(['hito' => 'Ya existe una solicitud pendiente para este hito.'])->withInput();
+        }
+
+        $finanzas = $this->calcularFinanzasProyecto($proyecto->id);
+        if ($validated['monto_solicitado'] > $finanzas['disponible']) {
+            return redirect()->back()->withErrors(['monto_solicitado' => 'El monto solicitado excede los fondos disponibles.'])->withInput();
+        }
+
+        $proveedores = [];
+        if (!empty($validated['proveedores'])) {
+            $proveedores = collect(explode(',', $validated['proveedores']))
+                ->map(fn($v) => trim($v))
+                ->filter()
+                ->values()
+                ->all();
+        }
+
+        $paths = $this->storeDesembolsoAdjuntos($request);
+
+        SolicitudDesembolso::create([
+            'proyecto_id' => $proyecto->id,
+            'monto_solicitado' => $validated['monto_solicitado'],
+            'hito' => $validated['hito'],
+            'descripcion' => $validated['descripcion'] ?? null,
+            'proveedores' => $proveedores,
+            'fecha_estimada' => $validated['fecha_estimada'] ?? null,
+            'estado' => 'pendiente',
+            'adjuntos' => $paths,
+        ]);
+
+        return redirect()->route('creador.fondos', ['proyecto' => $proyecto->id])
+            ->with('status', 'Solicitud enviada.');
+    }
+
     private function authorizeProyecto(Proyecto $proyecto, int $userId): void
     {
         abort_unless($proyecto->creador_id === $userId, 403);
+    }
+
+    private function authorizeProyectoId(int $proyectoId, int $userId): void
+    {
+        $proyecto = Proyecto::find($proyectoId);
+        abort_unless($proyecto && $proyecto->creador_id === $userId, 403);
     }
 
     private function storeAdjuntos(Request $request): array
@@ -512,11 +612,45 @@ class CreatorController extends Controller
         return $paths;
     }
 
+    private function storeDesembolsoAdjuntos(Request $request): array
+    {
+        $paths = [];
+        if ($request->hasFile('adjuntos')) {
+            foreach ($request->file('adjuntos') as $file) {
+                $paths[] = $file->store('desembolsos', 'public');
+            }
+        }
+
+        return $paths;
+    }
+
     private function deleteAdjuntos(array $paths): void
     {
         foreach ($paths as $path) {
             Storage::disk('public')->delete($path);
         }
+    }
+
+    private function calcularFinanzasProyecto(int $proyectoId): array
+    {
+        $recaudado = Aportacion::where('proyecto_id', $proyectoId)->sum('monto');
+        $solicitudes = SolicitudDesembolso::where('proyecto_id', $proyectoId)->get();
+
+        $liberado = $solicitudes->whereIn('estado', ['liberado', 'aprobado', 'pagado'])->sum('monto_solicitado');
+        $gastado = $solicitudes->where('estado', 'gastado')->sum('monto_solicitado');
+        $pendiente = $solicitudes->where('estado', 'pendiente')->sum('monto_solicitado');
+
+        $retenido = max($recaudado - $liberado, 0);
+        $disponible = max($recaudado - $liberado - $pendiente, 0);
+
+        return [
+            'recaudado' => $recaudado,
+            'retenido' => $retenido,
+            'liberado' => $liberado,
+            'gastado' => $gastado,
+            'pendiente' => $pendiente,
+            'disponible' => $disponible,
+        ];
     }
 
     private function decodeJson(?string $value): ?array

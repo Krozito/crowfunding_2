@@ -108,6 +108,12 @@ Route::delete('/creator/proyectos/{proyecto}/avances/{actualizacion}', [\App\Htt
 Route::get('/creator/fondos', [\App\Http\Controllers\CreatorController::class, 'fondos'])
     ->middleware(['auth','role:CREADOR'])
     ->name('creador.fondos');
+Route::get('/creator/fondos/historial', [\App\Http\Controllers\CreatorController::class, 'fondosHistorial'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.fondos.historial');
+Route::post('/creator/proyectos/{proyecto}/fondos/solicitudes', [\App\Http\Controllers\CreatorController::class, 'storeSolicitudDesembolso'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.fondos.solicitudes.store');
 
 Route::get('/creator/proveedores', [\App\Http\Controllers\CreatorController::class, 'proveedores'])
     ->middleware(['auth','role:CREADOR'])
