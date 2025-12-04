@@ -138,6 +138,9 @@ Route::get('/creator/perfil', [\App\Http\Controllers\CreatorController::class, '
 Route::get('/creator/reportes', [\App\Http\Controllers\CreatorController::class, 'reportes'])
     ->middleware(['auth','role:CREADOR'])
     ->name('creador.reportes');
+Route::post('/creator/proyectos/{proyecto}/reportes/pagos', [\App\Http\Controllers\CreatorController::class, 'storePago'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.reportes.pagos.store');
 
 // Acciones de creador (simples)
 Route::post('/creator/proyectos', [\App\Http\Controllers\CreatorController::class, 'storeProyecto'])

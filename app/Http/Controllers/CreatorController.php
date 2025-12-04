@@ -9,6 +9,7 @@ use App\Models\ProveedorHistorial;
 use App\Models\Proyecto;
 use App\Models\Recompensa;
 use App\Models\SolicitudDesembolso;
+use App\Models\Pago;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -296,9 +297,47 @@ class CreatorController extends Controller
         return view('creator.modules.perfil');
     }
 
-    public function reportes(): View
+    public function reportes(Request $request): View
     {
-        return view('creator.modules.reportes');
+        $userId = auth()->id();
+        $proyectos = Proyecto::where('creador_id', $userId)->get();
+        $selectedProjectId = $request->query('proyecto') ?? $proyectos->first()?->id;
+
+        $pagos = collect();
+        $solicitudes = collect();
+        $proveedores = collect();
+        $resumen = [
+            'totalPagado' => 0,
+            'pagosConAdjuntos' => 0,
+            'pagosProveedor' => 0,
+        ];
+
+        if ($selectedProjectId) {
+            $this->authorizeProyectoId($selectedProjectId, $userId);
+            $pagos = Pago::with('proveedor', 'solicitud')
+                ->whereHas('solicitud', fn($q) => $q->where('proyecto_id', $selectedProjectId))
+                ->orderByDesc('fecha_pago')
+                ->orderByDesc('id')
+                ->get();
+
+            $solicitudes = SolicitudDesembolso::where('proyecto_id', $selectedProjectId)
+                ->whereIn('estado', ['aprobado', 'liberado', 'pagado', 'gastado'])
+                ->orderByDesc('created_at')
+                ->get();
+
+            $proveedores = Proveedor::where('creador_id', $userId)
+                ->where(function ($q) use ($selectedProjectId) {
+                    $q->whereNull('proyecto_id')->orWhere('proyecto_id', $selectedProjectId);
+                })
+                ->orderBy('nombre_proveedor')
+                ->get();
+
+            $resumen['totalPagado'] = $pagos->sum('monto');
+            $resumen['pagosConAdjuntos'] = $pagos->filter(fn($p) => !empty($p->adjuntos))->count();
+            $resumen['pagosProveedor'] = $pagos->count();
+        }
+
+        return view('creator.modules.reportes', compact('proyectos', 'selectedProjectId', 'pagos', 'solicitudes', 'proveedores', 'resumen'));
     }
 
     public function storeProyecto(Request $request): RedirectResponse
@@ -514,6 +553,48 @@ class CreatorController extends Controller
         return redirect()->back()->with('status', 'Historial registrado.');
     }
 
+    public function storePago(Request $request, Proyecto $proyecto): RedirectResponse
+    {
+        $this->authorizeProyecto($proyecto, $request->user()->id);
+
+        $validated = $request->validate([
+            'solicitud_id' => ['required', 'exists:solicitudes_desembolso,id'],
+            'proveedor_id' => ['required', 'exists:proveedores,id'],
+            'monto' => ['required', 'numeric', 'min:0.01'],
+            'fecha_pago' => ['nullable', 'date'],
+            'concepto' => ['nullable', 'string'],
+            'adjuntos.*' => ['nullable', 'file', 'max:8192'],
+        ]);
+
+        $solicitud = SolicitudDesembolso::find($validated['solicitud_id']);
+        abort_unless($solicitud && $solicitud->proyecto_id === $proyecto->id, 403);
+
+        $permitidos = ['aprobado', 'liberado', 'pagado', 'gastado'];
+        if (!in_array($solicitud->estado, $permitidos, true)) {
+            return redirect()->back()->withErrors(['solicitud_id' => 'Solo puedes asociar pagos a desembolsos aprobados o liberados.'])->withInput();
+        }
+
+        $proveedor = Proveedor::find($validated['proveedor_id']);
+        abort_unless($proveedor && $proveedor->creador_id === $request->user()->id, 403);
+        if ($proveedor->proyecto_id && $proveedor->proyecto_id !== $proyecto->id) {
+            return redirect()->back()->withErrors(['proveedor_id' => 'El proveedor no pertenece a este proyecto.'])->withInput();
+        }
+
+        $paths = $this->storePagoAdjuntos($request);
+
+        Pago::create([
+            'solicitud_id' => $solicitud->id,
+            'proveedor_id' => $proveedor->id,
+            'monto' => $validated['monto'],
+            'fecha_pago' => $validated['fecha_pago'] ?? now(),
+            'concepto' => $validated['concepto'] ?? null,
+            'adjuntos' => $paths,
+        ]);
+
+        return redirect()->route('creador.reportes', ['proyecto' => $proyecto->id])
+            ->with('status', 'Pago registrado con evidencias.');
+    }
+
     public function updatePerfil(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -618,6 +699,18 @@ class CreatorController extends Controller
         if ($request->hasFile('adjuntos')) {
             foreach ($request->file('adjuntos') as $file) {
                 $paths[] = $file->store('desembolsos', 'public');
+            }
+        }
+
+        return $paths;
+    }
+
+    private function storePagoAdjuntos(Request $request): array
+    {
+        $paths = [];
+        if ($request->hasFile('adjuntos')) {
+            foreach ($request->file('adjuntos') as $file) {
+                $paths[] = $file->store('pagos', 'public');
             }
         }
 
