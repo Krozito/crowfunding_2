@@ -22,6 +22,10 @@ class User extends Authenticatable
         'info_personal',
         'redes_sociales',
         'indice_confianza',
+        'profesion',
+        'experiencia',
+        'biografia',
+        'foto_perfil',
     ];
 
     /**

@@ -76,19 +76,121 @@ Route::get('/creator/proyectos', [\App\Http\Controllers\CreatorController::class
 Route::get('/creator/recompensas', [\App\Http\Controllers\CreatorController::class, 'recompensas'])
     ->middleware(['auth','role:CREADOR'])
     ->name('creador.recompensas');
+Route::get('/creator/recompensas/crear', [\App\Http\Controllers\CreatorController::class, 'recompensasCrear'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.recompensas.create');
+Route::get('/creator/recompensas/gestion', [\App\Http\Controllers\CreatorController::class, 'recompensasGestionar'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.recompensas.gestion');
+Route::get('/creator/recompensas/preview', [\App\Http\Controllers\CreatorController::class, 'recompensasPreview'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.recompensas.preview');
+Route::post('/creator/recompensas', [\App\Http\Controllers\CreatorController::class, 'storeRecompensa'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.recompensas.store');
+Route::get('/creator/recompensas/{recompensa}/editar', [\App\Http\Controllers\CreatorController::class, 'recompensasEditar'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.recompensas.edit');
+Route::patch('/creator/recompensas/{recompensa}', [\App\Http\Controllers\CreatorController::class, 'updateRecompensa'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.recompensas.update');
+Route::patch('/creator/recompensas/{recompensa}/estado', [\App\Http\Controllers\CreatorController::class, 'toggleRecompensaEstado'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.recompensas.estado');
+Route::delete('/creator/recompensas/{recompensa}', [\App\Http\Controllers\CreatorController::class, 'eliminarRecompensa'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.recompensas.destroy');
 
 Route::get('/creator/avances', [\App\Http\Controllers\CreatorController::class, 'avances'])
     ->middleware(['auth','role:CREADOR'])
     ->name('creador.avances');
+Route::patch('/creator/proyectos/{proyecto}/avances/{actualizacion}', [\App\Http\Controllers\CreatorController::class, 'updateAvance'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proyectos.avances.update');
+Route::delete('/creator/proyectos/{proyecto}/avances/{actualizacion}', [\App\Http\Controllers\CreatorController::class, 'deleteAvance'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proyectos.avances.delete');
 
 Route::get('/creator/fondos', [\App\Http\Controllers\CreatorController::class, 'fondos'])
     ->middleware(['auth','role:CREADOR'])
     ->name('creador.fondos');
+Route::get('/creator/fondos/historial', [\App\Http\Controllers\CreatorController::class, 'fondosHistorial'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.fondos.historial');
+Route::post('/creator/proyectos/{proyecto}/fondos/solicitudes', [\App\Http\Controllers\CreatorController::class, 'storeSolicitudDesembolso'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.fondos.solicitudes.store');
+
+Route::get('/creator/proveedores', [\App\Http\Controllers\CreatorController::class, 'proveedores'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proveedores');
+
+Route::get('/creator/proveedores/crear', [\App\Http\Controllers\CreatorController::class, 'crearProveedor'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proveedores.create');
+
+Route::get('/creator/proveedores/{proveedor}/editar', [\App\Http\Controllers\CreatorController::class, 'editarProveedor'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proveedores.edit');
+
+Route::get('/creator/proveedores/{proveedor}', [\App\Http\Controllers\CreatorController::class, 'showProveedor'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proveedores.show');
+
+Route::get('/creator/perfil', [\App\Http\Controllers\CreatorController::class, 'perfil'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.perfil');
+Route::get('/creator/perfil/verificacion', [\App\Http\Controllers\CreatorController::class, 'verificacion'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.perfil.verificacion.form');
+
+Route::get('/creator/reportes', [\App\Http\Controllers\CreatorController::class, 'reportes'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.reportes');
+Route::post('/creator/proyectos/{proyecto}/reportes/pagos', [\App\Http\Controllers\CreatorController::class, 'storePago'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.reportes.pagos.store');
+
+// Acciones de creador (simples)
+Route::post('/creator/proyectos', [\App\Http\Controllers\CreatorController::class, 'storeProyecto'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proyectos.store');
+
+Route::patch('/creator/proyectos/{proyecto}', [\App\Http\Controllers\CreatorController::class, 'updateProyecto'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proyectos.update');
+
+Route::post('/creator/proyectos/{proyecto}/avances', [\App\Http\Controllers\CreatorController::class, 'agregarAvance'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proyectos.avances');
+
+Route::post('/creator/proveedores', [\App\Http\Controllers\CreatorController::class, 'storeProveedor'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proveedores.store');
+
+Route::patch('/creator/proveedores/{proveedor}', [\App\Http\Controllers\CreatorController::class, 'updateProveedor'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proveedores.update');
+
+Route::post('/creator/proveedores/{proveedor}/historial', [\App\Http\Controllers\CreatorController::class, 'storeProveedorHistorial'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proveedores.historial.store');
+
+Route::patch('/creator/perfil', [\App\Http\Controllers\CreatorController::class, 'updatePerfil'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.perfil.update');
+Route::post('/creator/perfil/verificacion', [\App\Http\Controllers\CreatorController::class, 'solicitarVerificacion'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.perfil.verificacion');
 
 // Panel de COLABORADOR
 Route::get('/colaborador', [\App\Http\Controllers\ColaboradorController::class, 'index'])
     ->middleware(['auth','role:COLABORADOR'])
     ->name('colaborador.dashboard');
+
+Route::post('/colaborador/logout', [\App\Http\Controllers\ColaboradorController::class, 'logout'])
+    ->middleware(['auth','role:COLABORADOR'])
+    ->name('colaborador.logout');
 
 // Dashboard general (fallback)
 Route::get('/dashboard', function () {
