@@ -10,6 +10,7 @@ use App\Models\Pago;
 use App\Models\User;
 use App\Models\VerificacionSolicitud;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -154,17 +155,31 @@ class AdminController extends Controller
             ->take(8)
             ->get();
 
+        $recaudadoAportes = (clone $aporteQuery)->sum('monto');
+        $recaudadoProyecto = $proyecto->monto_recaudado ?? 0;
+        $totalRecaudado = max($recaudadoAportes, $recaudadoProyecto);
+
         $stats = [
-            'total_recaudado' => (clone $aporteQuery)->sum('monto'),
+            'total_recaudado' => $totalRecaudado,
             'aportaciones' => (clone $aporteQuery)->count(),
             'colaboradores' => (clone $aporteQuery)->distinct('colaborador_id')->count('colaborador_id'),
         ];
+
+        $solicitudes = SolicitudDesembolso::where('proyecto_id', $proyecto->id)->get();
+        $fondosLiberados = $solicitudes->whereIn('estado', ['liberado','aprobado','pagado','gastado'])->sum('monto_solicitado');
+        $pendiente = $solicitudes->where('estado', 'pendiente')->sum('monto_solicitado');
+        $retenido = max($totalRecaudado - $fondosLiberados, 0);
 
         return view('admin.modules.proyectos-show', [
             'proyecto' => $proyecto,
             'topInversionistas' => $topInversionistas,
             'aportacionesRecientes' => $aportacionesRecientes,
             'stats' => $stats,
+            'fondos' => [
+                'liberados' => $fondosLiberados,
+                'retenidos' => $retenido,
+                'pendiente' => $pendiente,
+            ],
         ]);
     }
 
@@ -325,5 +340,113 @@ class AdminController extends Controller
         }
 
         return Storage::disk('public')->response($path);
+    }
+
+    public function exportFondosRetenidos()
+    {
+        $proyectos = Proyecto::with('creador')->get();
+        $recaudado = Aportacion::selectRaw('proyecto_id, SUM(monto) as total')->groupBy('proyecto_id')->pluck('total', 'proyecto_id');
+        $solicitudes = SolicitudDesembolso::selectRaw("
+            proyecto_id,
+            SUM(CASE WHEN estado IN ('liberado','aprobado','pagado','gastado') THEN monto_solicitado ELSE 0 END) as liberado
+        ")->groupBy('proyecto_id')->get()->keyBy('proyecto_id');
+
+        $rows = [];
+        foreach ($proyectos as $p) {
+            $rec = max($recaudado[$p->id] ?? 0, $p->monto_recaudado ?? 0);
+            $lib = $solicitudes[$p->id]->liberado ?? 0;
+            $retenido = max($rec - $lib, 0);
+            $rows[] = [
+                $p->id,
+                $p->titulo,
+                $p->creador->nombre_completo ?? $p->creador->name ?? 'N/D',
+                $rec,
+                $lib,
+                $retenido,
+            ];
+        }
+
+        $header = ['Proyecto ID', 'Proyecto', 'Creador', 'Recaudado', 'Liberado', 'Retenido'];
+        return $this->streamExcel('fondos_retenidos.xls', $header, $rows);
+    }
+
+    public function exportFondosLiberados()
+    {
+        $solicitudes = SolicitudDesembolso::with('proyecto.creador')
+            ->whereIn('estado', ['aprobado','liberado','pagado','gastado'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        $rows = $solicitudes->map(function ($s) {
+            return [
+                $s->id,
+                $s->proyecto->titulo ?? 'Proyecto',
+                $s->proyecto->creador->nombre_completo ?? $s->proyecto->creador->name ?? 'N/D',
+                $s->hito ?? 'N/D',
+                $s->estado,
+                $s->monto_solicitado,
+                $s->created_at?->format('Y-m-d H:i'),
+            ];
+        })->all();
+
+        $header = ['Solicitud ID', 'Proyecto', 'Creador', 'Hito', 'Estado', 'Monto', 'Creada'];
+        return $this->streamExcel('fondos_liberados.xls', $header, $rows);
+    }
+
+    public function exportRecaudacionMensual()
+    {
+        $rows = Aportacion::selectRaw("DATE_FORMAT(fecha_aportacion, '%Y-%m') as periodo, SUM(monto) as total")
+            ->groupBy('periodo')
+            ->orderBy('periodo')
+            ->get()
+            ->map(fn($r) => [$r->periodo, $r->total])
+            ->all();
+
+        $header = ['Periodo (YYYY-MM)', 'Total'];
+        return $this->streamExcel('recaudacion_mensual.xls', $header, $rows);
+    }
+
+    public function exportRecaudacionCategoria()
+    {
+        $rows = Proyecto::selectRaw('categoria, SUM(monto_recaudado) as rec_proyecto')
+            ->leftJoin('aportaciones', 'proyectos.id', '=', 'aportaciones.proyecto_id')
+            ->selectRaw('COALESCE(SUM(aportaciones.monto), 0) as rec_aportes')
+            ->groupBy('categoria')
+            ->get()
+            ->map(function ($r) {
+                $rec = max($r->rec_proyecto ?? 0, $r->rec_aportes ?? 0);
+                return [$r->categoria ?? 'Sin categoria', $rec];
+            })
+            ->all();
+
+        $header = ['Categoria', 'Total recaudado'];
+        return $this->streamExcel('recaudacion_categoria.xls', $header, $rows);
+    }
+
+    private function streamExcel(string $filename, array $header, array $rows)
+    {
+        $callback = function () use ($header, $rows) {
+            $escape = function ($value) {
+                return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+            };
+            echo "<table border='1'>";
+            echo "<tr>";
+            foreach ($header as $col) {
+                echo "<th>" . $escape($col) . "</th>";
+            }
+            echo "</tr>";
+            foreach ($rows as $row) {
+                echo "<tr>";
+                foreach ($row as $cell) {
+                    echo "<td>" . $escape($cell) . "</td>";
+                }
+                echo "</tr>";
+            }
+            echo "</table>";
+        };
+
+        return Response::streamDownload($callback, $filename, [
+            'Content-Type' => 'application/vnd.ms-excel',
+        ]);
     }
 }

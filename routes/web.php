@@ -53,6 +53,18 @@ Route::get('/admin/finanzas/solicitudes', [\App\Http\Controllers\AdminController
 Route::patch('/admin/finanzas/solicitudes/{solicitud}', [\App\Http\Controllers\AdminController::class, 'updateSolicitudFondos'])
     ->middleware(['auth','role:ADMIN'])
     ->name('admin.finanzas.solicitudes.update');
+Route::get('/admin/finanzas/export/retenidos', [\App\Http\Controllers\AdminController::class, 'exportFondosRetenidos'])
+    ->middleware(['auth','role:ADMIN'])
+    ->name('admin.finanzas.export.retenidos');
+Route::get('/admin/finanzas/export/liberados', [\App\Http\Controllers\AdminController::class, 'exportFondosLiberados'])
+    ->middleware(['auth','role:ADMIN'])
+    ->name('admin.finanzas.export.liberados');
+Route::get('/admin/finanzas/export/recaudacion-mensual', [\App\Http\Controllers\AdminController::class, 'exportRecaudacionMensual'])
+    ->middleware(['auth','role:ADMIN'])
+    ->name('admin.finanzas.export.recaudacion.mensual');
+Route::get('/admin/finanzas/export/recaudacion-categoria', [\App\Http\Controllers\AdminController::class, 'exportRecaudacionCategoria'])
+    ->middleware(['auth','role:ADMIN'])
+    ->name('admin.finanzas.export.recaudacion.categoria');
 
 Route::get('/admin/proveedores', [\App\Http\Controllers\AdminController::class, 'proveedores'])
     ->middleware(['auth','role:ADMIN'])

@@ -60,8 +60,12 @@
                         <p class="text-lg font-semibold text-white">{{ $stats['aportaciones'] ?? 0 }}</p>
                     </div>
                     <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
-                        <p class="text-xs text-zinc-300 uppercase tracking-wide">Backers</p>
-                        <p class="text-lg font-semibold text-white">{{ $stats['colaboradores'] ?? 0 }}</p>
+                        <p class="text-xs text-zinc-300 uppercase tracking-wide">Liberado</p>
+                        <p class="text-lg font-semibold text-emerald-100">US$ {{ number_format($fondos['liberados'] ?? 0, 2) }}</p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+                        <p class="text-xs text-zinc-300 uppercase tracking-wide">Retenido</p>
+                        <p class="text-lg font-semibold text-amber-100">US$ {{ number_format($fondos['retenidos'] ?? 0, 2) }}</p>
                     </div>
                 </div>
             </div>
@@ -118,6 +122,7 @@
                 </div>
             </div>
         </section>
+
     </main>
 </body>
 </html>

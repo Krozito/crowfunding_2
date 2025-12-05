@@ -20,10 +20,6 @@
                 </a>
                 <h1 class="text-lg font-semibold text-white">Finanzas globales</h1>
             </div>
-            <div class="flex items-center gap-2 text-xs">
-                <a href="{{ route('admin.finanzas.proyectos') }}" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-white hover:border-indigo-400/60">Fondos por proyecto</a>
-                <a href="{{ route('admin.finanzas.solicitudes') }}" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-white hover:border-indigo-400/60">Solicitudes</a>
-            </div>
         </div>
     </header>
 
@@ -34,6 +30,10 @@
                     <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Estado general</p>
                     <h2 class="text-2xl font-bold text-white">Flujo global de la plataforma</h2>
                     <p class="text-sm text-zinc-400">Supervisa recaudado, escrow, liberado, gastado y pendiente.</p>
+                </div>
+                <div class="flex flex-wrap gap-2 text-xs">
+                    <a href="{{ route('admin.finanzas.proyectos') }}" class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-white hover:border-indigo-400/60">Fondos por proyecto</a>
+                    <a href="{{ route('admin.finanzas.solicitudes') }}" class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-white hover:border-indigo-400/60">Solicitudes</a>
                 </div>
             </div>
 
@@ -67,12 +67,12 @@
             <div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-zinc-300">
                 <p class="text-sm font-semibold text-white">Reportes globales</p>
                 <div class="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-4 text-xs">
-                    <button class="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-left font-semibold text-white hover:border-indigo-400/60">Descargar fondos retenidos</button>
-                    <button class="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-left font-semibold text-white hover:border-indigo-400/60">Descargar fondos liberados</button>
-                    <button class="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-left font-semibold text-white hover:border-indigo-400/60">Recaudacion por mes/año</button>
-                    <button class="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-left font-semibold text-white hover:border-indigo-400/60">Reporte por categoria</button>
+                    <a href="{{ route('admin.finanzas.export.retenidos') }}" class="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-left font-semibold text-white hover:border-indigo-400/60">Descargar fondos retenidos (Excel)</a>
+                    <a href="{{ route('admin.finanzas.export.liberados') }}" class="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-left font-semibold text-white hover:border-indigo-400/60">Descargar fondos liberados (Excel)</a>
+                    <a href="{{ route('admin.finanzas.export.recaudacion.mensual') }}" class="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-left font-semibold text-white hover:border-indigo-400/60">Recaudacion por mes/año (Excel)</a>
+                    <a href="{{ route('admin.finanzas.export.recaudacion.categoria') }}" class="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-left font-semibold text-white hover:border-indigo-400/60">Reporte por categoria (Excel)</a>
                 </div>
-                <p class="mt-2 text-[11px] text-zinc-500">Los botones son placeholders listos para conectar con la generacion de reportes.</p>
+                <p class="mt-2 text-[11px] text-zinc-500">Los reportes se generan como hojas Excel.</p>
             </div>
         </section>
     </main>
