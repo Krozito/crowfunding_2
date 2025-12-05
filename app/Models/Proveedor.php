@@ -24,6 +24,11 @@ class Proveedor extends Model
         return $this->belongsTo(Proyecto::class);
     }
 
+    public function creador()
+    {
+        return $this->belongsTo(User::class, 'creador_id');
+    }
+
     public function historiales()
     {
         return $this->hasMany(ProveedorHistorial::class);

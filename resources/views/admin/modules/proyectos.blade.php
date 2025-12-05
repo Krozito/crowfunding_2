@@ -63,7 +63,7 @@
                 </form>
             </div>
 
-            <div class="mt-6 grid gap-4 lg:grid-cols-2">
+            <div class="mt-6 grid gap-4 md:grid-cols-2">
                 @forelse ($proyectos as $proyecto)
                     @php
                         $estadoStyles = [
@@ -73,7 +73,7 @@
                         ];
                         $badge = $estadoStyles[$proyecto->estado] ?? 'bg-white/10 text-white border border-white/20';
                     @endphp
-                    <article class="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-inner ring-1 ring-indigo-500/10 space-y-3">
+                    <article class="flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-5 shadow-inner ring-1 ring-indigo-500/10 space-y-3">
                         <div class="flex items-start justify-between gap-3">
                             <div>
                                 <p class="text-lg font-semibold text-white">{{ $proyecto->titulo }}</p>
@@ -81,28 +81,28 @@
                             </div>
                             <span class="rounded-full px-3 py-1 text-[11px] font-semibold {{ $badge }}">{{ strtoupper($proyecto->estado ?? 'PENDIENTE') }}</span>
                         </div>
-                        <div class="grid grid-cols-2 gap-3 text-sm text-zinc-200">
-                            <div class="rounded-xl border border-white/10 bg-zinc-900/60 px-3 py-2">
+                        <div class="grid grid-cols-2 gap-3 text-sm text-zinc-200 flex-1">
+                            <div class="rounded-xl border border-white/10 bg-zinc-900/60 px-3 py-2 h-full">
                                 <p class="text-[11px] text-zinc-500">Categoria</p>
                                 <p class="font-semibold">{{ $proyecto->categoria ?? 'N/D' }}</p>
                             </div>
-                            <div class="rounded-xl border border-white/10 bg-zinc-900/60 px-3 py-2">
+                            <div class="rounded-xl border border-white/10 bg-zinc-900/60 px-3 py-2 h-full">
                                 <p class="text-[11px] text-zinc-500">Ubicacion</p>
                                 <p class="font-semibold">{{ $proyecto->ubicacion_geografica ?? 'N/D' }}</p>
                             </div>
-                            <div class="rounded-xl border border-white/10 bg-zinc-900/60 px-3 py-2">
+                            <div class="rounded-xl border border-white/10 bg-zinc-900/60 px-3 py-2 h-full">
                                 <p class="text-[11px] text-zinc-500">Meta</p>
                                 <p class="font-semibold">US$ {{ number_format($proyecto->meta_financiacion, 2) }}</p>
                             </div>
-                            <div class="rounded-xl border border-white/10 bg-zinc-900/60 px-3 py-2">
+                            <div class="rounded-xl border border-white/10 bg-zinc-900/60 px-3 py-2 h-full">
                                 <p class="text-[11px] text-zinc-500">Recaudado</p>
                                 <p class="font-semibold">US$ {{ number_format($proyecto->monto_recaudado, 2) }}</p>
                             </div>
-                            <div class="rounded-xl border border-white/10 bg-zinc-900/60 px-3 py-2">
+                            <div class="rounded-xl border border-white/10 bg-zinc-900/60 px-3 py-2 h-full">
                                 <p class="text-[11px] text-zinc-500">Fecha limite</p>
                                 <p class="font-semibold">{{ optional($proyecto->fecha_limite)->format('d/m/Y') ?? 'Sin fecha' }}</p>
                             </div>
-                            <div class="rounded-xl border border-white/10 bg-zinc-900/60 px-3 py-2">
+                            <div class="rounded-xl border border-white/10 bg-zinc-900/60 px-3 py-2 h-full">
                                 <p class="text-[11px] text-zinc-500">Creado</p>
                                 <p class="font-semibold">{{ $proyecto->created_at?->format('d/m/Y') }}</p>
                             </div>

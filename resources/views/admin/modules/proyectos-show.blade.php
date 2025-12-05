@@ -101,9 +101,14 @@
             </div>
 
             <div class="rounded-3xl border border-white/10 bg-zinc-900/70 p-6 shadow-xl space-y-4">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Top inversionistas</p>
-                    <h3 class="text-lg font-semibold text-white">Mayores aportantes</h3>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Top inversionistas</p>
+                        <h3 class="text-lg font-semibold text-white">Mayores aportantes</h3>
+                    </div>
+                    <a href="{{ route('admin.proyectos.gastos', $proyecto) }}" class="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-white hover:border-indigo-400/60">
+                        Ver gastos y comprobantes
+                    </a>
                 </div>
                 <div class="space-y-3">
                     @forelse($topInversionistas as $i => $inv)

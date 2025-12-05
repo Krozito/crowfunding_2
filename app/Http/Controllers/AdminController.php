@@ -8,6 +8,7 @@ use App\Models\Aportacion;
 use App\Models\SolicitudDesembolso;
 use App\Models\Pago;
 use App\Models\User;
+use App\Models\Proveedor;
 use App\Models\VerificacionSolicitud;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
@@ -183,6 +184,35 @@ class AdminController extends Controller
         ]);
     }
 
+    public function proyectoGastos(Proyecto $proyecto): View
+    {
+        $proyecto->load('creador');
+
+        $pagos = Pago::with(['proveedor', 'solicitud'])
+            ->whereHas('solicitud', fn($q) => $q->where('proyecto_id', $proyecto->id))
+            ->orderByDesc('fecha_pago')
+            ->orderByDesc('id')
+            ->get();
+
+        $reporteProveedores = $pagos->groupBy('proveedor_id')->map(function ($items) {
+            $proveedor = $items->first()->proveedor;
+            return [
+                'proveedor' => $proveedor?->nombre_proveedor ?? 'Sin proveedor',
+                'total' => $items->sum('monto'),
+                'pagos' => $items->count(),
+                'conAdjuntos' => $items->filter(fn($p) => !empty($p->adjuntos))->count(),
+            ];
+        });
+
+        $totales = [
+            'pagos' => $pagos->count(),
+            'monto' => $pagos->sum('monto'),
+            'conAdjuntos' => $pagos->filter(fn($p) => !empty($p->adjuntos))->count(),
+        ];
+
+        return view('admin.modules.proyectos-gastos', compact('proyecto', 'pagos', 'reporteProveedores', 'totales'));
+    }
+
     public function auditorias(): View
     {
         return view('admin.modules.auditorias');
@@ -212,13 +242,43 @@ class AdminController extends Controller
 
     public function proveedores(): View
     {
-        return view('admin.modules.proveedores');
+        $search = request()->query('q');
+        $proyectoFiltro = request()->query('proyecto');
+        $creadorFiltro = request()->query('creador');
+
+        $proyectos = Proyecto::orderBy('titulo')->get(['id','titulo','creador_id']);
+        $creadores = User::orderBy('name')->get(['id','name','nombre_completo']);
+
+        $proveedoresQuery = Proveedor::with(['proyecto', 'creador'])
+            ->withAvg('historiales as calificacion_promedio', 'calificacion')
+            ->latest();
+
+        if ($search) {
+            $proveedoresQuery->where(function ($q) use ($search) {
+                $q->where('nombre_proveedor', 'like', "%{$search}%")
+                  ->orWhere('especialidad', 'like', "%{$search}%")
+                  ->orWhere('info_contacto', 'like', "%{$search}%");
+            });
+        }
+
+        if ($proyectoFiltro) {
+            $proveedoresQuery->where('proyecto_id', $proyectoFiltro);
+        }
+
+        if ($creadorFiltro) {
+            $proveedoresQuery->where('creador_id', $creadorFiltro);
+        }
+
+        $proveedores = $proveedoresQuery->paginate(12)->withQueryString();
+        $stats = [
+            'total' => Proveedor::count(),
+            'conProyecto' => Proveedor::whereNotNull('proyecto_id')->count(),
+            'calificacionPromedio' => round((float) \App\Models\ProveedorHistorial::avg('calificacion'), 2),
+        ];
+
+        return view('admin.modules.proveedores', compact('proveedores', 'proyectos', 'creadores', 'search', 'proyectoFiltro', 'creadorFiltro', 'stats'));
     }
 
-    public function reportes(): View
-    {
-        return view('admin.modules.reportes');
-    }
 
     public function finanzasProyectos(): View
     {

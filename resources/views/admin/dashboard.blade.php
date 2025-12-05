@@ -116,13 +116,6 @@
                             </span>
                             <span class="text-xs text-indigo-200">Ir</span>
                         </a>
-                        <a href="{{ route('admin.reportes') }}" class="flex items-center justify-between px-4 py-3 text-sm text-zinc-200 hover:bg-white/5 hover:text-white">
-                            <span class="flex items-center gap-2">
-                                <span class="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-200">R</span>
-                                Reportes y analytics
-                            </span>
-                            <span class="text-xs text-indigo-200">Ir</span>
-                        </a>
                     </nav>
                 </div>
             </aside>
