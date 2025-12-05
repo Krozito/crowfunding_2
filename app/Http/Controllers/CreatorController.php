@@ -24,8 +24,10 @@ class CreatorController extends Controller
 
         $proyectos = Proyecto::where('creador_id', $userId)->get();
 
-        $recaudado = Aportacion::whereHas('proyecto', fn($q) => $q->where('creador_id', $userId))
+        $recaudadoAportaciones = Aportacion::whereHas('proyecto', fn($q) => $q->where('creador_id', $userId))
             ->sum('monto');
+        $recaudadoDeclarado = $proyectos->sum('monto_recaudado');
+        $recaudado = max($recaudadoAportaciones, $recaudadoDeclarado);
 
         $metaTotal = $proyectos->sum('meta_financiacion');
         $avance = $metaTotal > 0 ? round(($recaudado / $metaTotal) * 100) . '%' : '0%';
@@ -793,7 +795,9 @@ class CreatorController extends Controller
 
     private function calcularFinanzasProyecto(int $proyectoId): array
     {
-        $recaudado = Aportacion::where('proyecto_id', $proyectoId)->sum('monto');
+        $recaudadoAportaciones = Aportacion::where('proyecto_id', $proyectoId)->sum('monto');
+        $recaudadoProyecto = Proyecto::where('id', $proyectoId)->value('monto_recaudado') ?? 0;
+        $recaudado = max($recaudadoAportaciones, $recaudadoProyecto);
         $solicitudes = SolicitudDesembolso::where('proyecto_id', $proyectoId)->get();
 
         $liberado = $solicitudes->whereIn('estado', ['liberado', 'aprobado', 'pagado'])->sum('monto_solicitado');
