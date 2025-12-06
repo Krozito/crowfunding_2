@@ -3,33 +3,76 @@
 namespace App\Http\Controllers;
 
 use App\Models\Aportacion;
-use App\Models\Proyecto;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class ColaboradorController extends Controller
 {
+    /**
+     * Panel principal del colaborador.
+     */
     public function index(): View
     {
-        $userId = Auth::id();
+        $user = Auth::user();
 
-        // Obtener IDs de proyectos que el colaborador ha apoyado
-        $proyectosAportadosIds = Aportacion::where('colaborador_id', $userId)
-            ->pluck('proyecto_id')
-            ->unique();
+        // Métricas simples de ejemplo
+        $totalAportado      = Aportacion::where('colaborador_id', $user->id)->sum('monto');
+        $proyectosApoyados  = Aportacion::where('colaborador_id', $user->id)
+                                ->distinct('proyecto_id')
+                                ->count('proyecto_id');
+        $totalAportaciones  = Aportacion::where('colaborador_id', $user->id)->count();
 
-        // Obtener información de esos proyectos
-        $proyectosAportados = Proyecto::whereIn('id', $proyectosAportadosIds)->get();
+        return view('colaborador.dashboard', compact(
+            'user',
+            'totalAportado',
+            'proyectosApoyados',
+            'totalAportaciones'
+        ));
+    }
 
-        // Métricas básicas
-        $metrics = [
-            'totalAportado'   => Aportacion::where('colaborador_id', $userId)->sum('monto'),
-            'numProyectos'    => $proyectosAportadosIds->count(),
-            'numAportaciones' => Aportacion::where('colaborador_id', $userId)->count(),
-        ];
+    /**
+     * Proyectos que está apoyando este colaborador.
+     */
+    public function proyectos(): View
+    {
+        $user = Auth::user();
 
-        return view('colaborador.dashboard', compact('metrics', 'proyectosAportados'));
+        $aportaciones = Aportacion::with('proyecto')
+            ->where('colaborador_id', $user->id)
+            ->get();
+
+        return view('colaborador.proyectos', compact('aportaciones'));
+    }
+
+    /**
+     * Historial de aportaciones.
+     */
+    public function aportaciones(): View
+    {
+        $user = Auth::user();
+
+        $aportaciones = Aportacion::with('proyecto')
+            ->where('colaborador_id', $user->id)
+            ->latest()
+            ->get();
+
+        return view('colaborador.aportaciones', compact('aportaciones'));
+    }
+
+    /**
+     * Reportes / resumen financiero personal.
+     */
+    public function reportes(): View
+    {
+        $user = Auth::user();
+
+        $totalAportado      = Aportacion::where('colaborador_id', $user->id)->sum('monto');
+        $totalAportaciones  = Aportacion::where('colaborador_id', $user->id)->count();
+
+        return view('colaborador.reportes', compact(
+            'user',
+            'totalAportado',
+            'totalAportaciones'
+        ));
     }
 }
-
-

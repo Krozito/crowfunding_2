@@ -240,16 +240,17 @@ Route::post('/creator/perfil/verificacion', [\App\Http\Controllers\CreatorContro
 
 // Panel de COLABORADOR
 Route::middleware(['auth', 'role:COLABORADOR'])->group(function () {
+
     Route::get('/colaborador', [ColaboradorController::class, 'index'])
         ->name('colaborador.dashboard');
 
-    Route::get('/proyectos', [ColaboradorController::class, 'proyectos'])
+    Route::get('/colaborador/proyectos', [ColaboradorController::class, 'proyectos'])
         ->name('colaborador.proyectos');
 
-    Route::get('/aportaciones', [ColaboradorController::class, 'aportaciones'])
+    Route::get('/colaborador/aportaciones', [ColaboradorController::class, 'aportaciones'])
         ->name('colaborador.aportaciones');
 
-    Route::get('/reportes', [ColaboradorController::class, 'reportes'])
+    Route::get('/colaborador/reportes', [ColaboradorController::class, 'reportes'])
         ->name('colaborador.reportes');
 });
 
