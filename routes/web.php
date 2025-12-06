@@ -242,8 +242,6 @@ Route::post('/creator/perfil/verificacion', [\App\Http\Controllers\CreatorContro
 Route::middleware(['auth', 'role:COLABORADOR'])->group(function () {
     Route::get('/colaborador', [ColaboradorController::class, 'index'])
         ->name('colaborador.dashboard');
-    Route::get('/', [ColaboradorController::class, 'index'])
-        ->name('colaborador.dashboard');
 
     Route::get('/proyectos', [ColaboradorController::class, 'proyectos'])
         ->name('colaborador.proyectos');
