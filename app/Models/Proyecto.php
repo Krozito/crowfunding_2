@@ -42,4 +42,9 @@ class Proyecto extends Model
     {
         return $this->hasMany(Aportacion::class, 'proyecto_id');
     }
+
+    public function hitos()
+    {
+        return $this->hasMany(\App\Models\ActualizacionProyecto::class, 'proyecto_id');
+    }
 }

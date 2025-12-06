@@ -8,6 +8,8 @@ use App\Models\Pago;
 use App\Models\VerificacionSolicitud;
 use App\Models\Proyecto;
 use App\Models\ActualizacionProyecto;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AuditorController extends Controller
 {
@@ -53,21 +55,155 @@ class AuditorController extends Controller
 
     public function comprobantes()
     {
-        $pagos = Pago::with(['proveedor', 'solicitud.proyecto'])
-            ->orderByDesc('fecha_pago')
-            ->orderByDesc('id')
-            ->paginate(15);
+        $estado = request()->query('estado');
+        $q = request()->query('q');
 
-        return view('auditor.modules.comprobantes', compact('pagos'));
+        $pagosQuery = Pago::with(['proveedor', 'solicitud.proyecto'])
+            ->orderByDesc('fecha_pago')
+            ->orderByDesc('id');
+
+        if ($estado) {
+            $pagosQuery->whereHas('solicitud', function ($sub) use ($estado) {
+                $sub->where('estado', $estado);
+            });
+        }
+
+        if ($q) {
+            $pagosQuery->where(function ($sub) use ($q) {
+                $sub->where('concepto', 'like', "%{$q}%")
+                    ->orWhereHas('proveedor', function ($p) use ($q) {
+                        $p->where('nombre_proveedor', 'like', "%{$q}%");
+                    })
+                    ->orWhereHas('solicitud.proyecto', function ($p) use ($q) {
+                        $p->where('titulo', 'like', "%{$q}%");
+                    });
+            });
+        }
+
+        $pagos = $pagosQuery->paginate(15)->withQueryString();
+        $estados = SolicitudDesembolso::select('estado')->distinct()->pluck('estado')->filter()->values();
+
+        return view('auditor.modules.comprobantes', compact('pagos', 'estado', 'q', 'estados'));
+    }
+
+    public function showComprobante(Pago $pago)
+    {
+        $pago->load(['proveedor', 'solicitud.proyecto']);
+        $adjuntos = collect($pago->adjuntos ?? [])
+            ->filter()
+            ->map(function ($path) {
+                if (Str::startsWith($path, ['http://', 'https://', '//'])) {
+                    return ['path' => $path, 'url' => $path];
+                }
+
+                $normalized = ltrim(preg_replace('/^public\\//', '', $path), '/');
+                if (Storage::disk('public')->exists($normalized)) {
+                    return ['path' => $path, 'url' => asset('storage/' . $normalized)];
+                }
+
+                if (file_exists(public_path('storage/' . $normalized))) {
+                    return ['path' => $path, 'url' => asset('storage/' . $normalized)];
+                }
+
+                if (file_exists(public_path($path))) {
+                    return ['path' => $path, 'url' => asset($path)];
+                }
+
+                return ['path' => $path, 'url' => Storage::url($path)];
+            });
+
+        return view('auditor.modules.comprobantes-show', compact('pago', 'adjuntos'));
+    }
+
+    public function updateComprobanteEstado(Request $request, Pago $pago)
+    {
+        $validated = $request->validate([
+            'accion' => ['required', 'in:aprobar,rechazar,observar'],
+            'nota' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $nuevoEstado = match ($validated['accion']) {
+            'aprobar' => 'aprobado',
+            'rechazar' => 'rechazado',
+            'observar' => 'observado',
+        };
+
+        if ($nuevoEstado === 'rechazado' && empty($validated['nota'])) {
+            return back()->withErrors(['nota' => 'Agrega una nota para rechazar el comprobante.'])->withInput();
+        }
+
+        $pago->estado_auditoria = $nuevoEstado;
+        $pago->nota_auditoria = $validated['nota'] ?? null;
+        $pago->save();
+
+        return redirect()
+            ->route('auditor.comprobantes.show', $pago)
+            ->with('status', "Comprobante {$nuevoEstado}.");
     }
 
     public function desembolsos()
     {
-        $solicitudes = SolicitudDesembolso::with('proyecto')
-            ->orderByDesc('created_at')
-            ->paginate(15);
+        $estado = request()->query('estado');
+        $q = request()->query('q');
 
-        return view('auditor.modules.desembolsos', compact('solicitudes'));
+        $query = SolicitudDesembolso::with('proyecto')
+            ->orderByDesc('created_at');
+
+        if ($estado) {
+            $query->where('estado', $estado);
+        }
+
+        if ($q) {
+            $query->whereHas('proyecto', function ($sub) use ($q) {
+                $sub->where('titulo', 'like', "%{$q}%");
+            });
+        }
+
+        $solicitudes = $query->paginate(15)->withQueryString();
+        $estados = SolicitudDesembolso::select('estado')->distinct()->pluck('estado')->filter()->values();
+
+        return view('auditor.modules.desembolsos', compact('solicitudes', 'estado', 'q', 'estados'));
+    }
+
+    public function showDesembolso(SolicitudDesembolso $solicitud)
+    {
+        $solicitud->load('proyecto');
+        $adjuntos = collect($solicitud->adjuntos ?? [])
+            ->filter()
+            ->map(function ($path) {
+                $normalized = ltrim(preg_replace('/^public\\//', '', $path), '/');
+                if (Storage::disk('public')->exists($normalized)) {
+                    return ['path' => $path, 'url' => asset('storage/' . $normalized)];
+                }
+                if (file_exists(public_path('storage/' . $normalized))) {
+                    return ['path' => $path, 'url' => asset('storage/' . $normalized)];
+                }
+                return ['path' => $path, 'url' => Storage::url($path)];
+            });
+
+        return view('auditor.modules.desembolsos-show', compact('solicitud', 'adjuntos'));
+    }
+
+    public function updateDesembolsoEstado(Request $request, SolicitudDesembolso $solicitud)
+    {
+        $validated = $request->validate([
+            'accion' => ['required', 'in:aprobar,rechazar'],
+            'nota' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $nuevoEstado = $validated['accion'] === 'aprobar' ? 'aprobado' : 'rechazado';
+        if ($nuevoEstado === 'rechazado' && empty($validated['nota'])) {
+            return back()->withErrors(['nota' => 'Agrega una nota para rechazar la solicitud.'])->withInput();
+        }
+
+        $solicitud->estado = $nuevoEstado;
+        $solicitud->estado_admin = $validated['accion'];
+        $solicitud->justificacion_admin = $validated['nota'] ?? null;
+        $solicitud->save();
+
+        return redirect()
+            ->route('auditor.desembolsos.show', $solicitud)
+            ->with('status', "Solicitud {$nuevoEstado}.");
     }
 
     public function reportes()
@@ -79,20 +215,71 @@ class AuditorController extends Controller
 
     public function hitos()
     {
-        $hitos = ActualizacionProyecto::where('es_hito', true)
-            ->orderByDesc('fecha_publicacion')
-            ->take(30)
-            ->get();
+        $q = request()->query('q');
 
-        return view('auditor.modules.hitos', compact('hitos'));
+        $proyectos = Proyecto::withCount(['hitos' => function ($q2) {
+                $q2->where('es_hito', true);
+            }])
+            ->when($q, fn($query) => $query->where('titulo', 'like', "%{$q}%"))
+            ->orderBy('titulo')
+            ->paginate(12)
+            ->withQueryString();
+
+        return view('auditor.modules.hitos', compact('proyectos', 'q'));
+    }
+
+    public function hitosProyecto(Request $request, Proyecto $proyecto)
+    {
+        $q = $request->query('q');
+
+        $hitos = ActualizacionProyecto::where('proyecto_id', $proyecto->id)
+            ->where('es_hito', true)
+            ->when($q, function ($query) use ($q) {
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('titulo', 'like', "%{$q}%")
+                        ->orWhere('contenido', 'like', "%{$q}%");
+                });
+            })
+            ->orderByDesc('fecha_publicacion')
+            ->paginate(12)
+            ->withQueryString();
+
+        return view('auditor.modules.hitos-proyecto', compact('proyecto', 'hitos', 'q'));
     }
 
     public function proyectos()
     {
-        $proyectos = Proyecto::orderByDesc('created_at')
-            ->withCount('aportaciones')
-            ->get();
+        $q = request()->query('q');
+        $estado = request()->query('estado');
 
-        return view('auditor.modules.proyectos', compact('proyectos'));
+        $proyectos = Proyecto::withCount('aportaciones')
+            ->when($q, fn($query) => $query->where('titulo', 'like', "%{$q}%"))
+            ->when($estado, fn($query) => $query->where('estado', $estado))
+            ->orderByDesc('created_at')
+            ->paginate(12)
+            ->withQueryString();
+
+        $estadosPublicacion = Proyecto::select('estado')->distinct()->pluck('estado')->filter()->values();
+
+        return view('auditor.modules.proyectos', compact('proyectos', 'q', 'estado', 'estadosPublicacion'));
+    }
+
+    public function showProyecto(Proyecto $proyecto)
+    {
+        return view('auditor.modules.proyectos-show', compact('proyecto'));
+    }
+
+    public function updateProyectoPublicacion(Request $request, Proyecto $proyecto)
+    {
+        $validated = $request->validate([
+            'accion' => ['required', 'in:permitir,pausar'],
+        ]);
+
+        $proyecto->estado = $validated['accion'] === 'permitir' ? 'publicado' : 'pausado';
+        $proyecto->save();
+
+        return redirect()
+            ->route('auditor.proyectos.show', $proyecto)
+            ->with('status', "Proyecto {$proyecto->estado}.");
     }
 }

@@ -111,18 +111,39 @@ Route::get('/auditor', [\App\Http\Controllers\AuditorController::class, 'index']
 Route::get('/auditor/comprobantes', [\App\Http\Controllers\AuditorController::class, 'comprobantes'])
     ->middleware(['auth','role:AUDITOR'])
     ->name('auditor.comprobantes');
+Route::get('/auditor/comprobantes/{pago}', [\App\Http\Controllers\AuditorController::class, 'showComprobante'])
+    ->middleware(['auth','role:AUDITOR'])
+    ->name('auditor.comprobantes.show');
+Route::patch('/auditor/comprobantes/{pago}/estado', [\App\Http\Controllers\AuditorController::class, 'updateComprobanteEstado'])
+    ->middleware(['auth','role:AUDITOR'])
+    ->name('auditor.comprobantes.estado');
 Route::get('/auditor/desembolsos', [\App\Http\Controllers\AuditorController::class, 'desembolsos'])
     ->middleware(['auth','role:AUDITOR'])
     ->name('auditor.desembolsos');
+Route::get('/auditor/desembolsos/{solicitud}', [\App\Http\Controllers\AuditorController::class, 'showDesembolso'])
+    ->middleware(['auth','role:AUDITOR'])
+    ->name('auditor.desembolsos.show');
+Route::patch('/auditor/desembolsos/{solicitud}/estado', [\App\Http\Controllers\AuditorController::class, 'updateDesembolsoEstado'])
+    ->middleware(['auth','role:AUDITOR'])
+    ->name('auditor.desembolsos.estado');
 Route::get('/auditor/reportes', [\App\Http\Controllers\AuditorController::class, 'reportes'])
     ->middleware(['auth','role:AUDITOR'])
     ->name('auditor.reportes');
 Route::get('/auditor/hitos', [\App\Http\Controllers\AuditorController::class, 'hitos'])
     ->middleware(['auth','role:AUDITOR'])
     ->name('auditor.hitos');
+Route::get('/auditor/hitos/proyecto/{proyecto}', [\App\Http\Controllers\AuditorController::class, 'hitosProyecto'])
+    ->middleware(['auth','role:AUDITOR'])
+    ->name('auditor.hitos.proyecto');
 Route::get('/auditor/proyectos', [\App\Http\Controllers\AuditorController::class, 'proyectos'])
     ->middleware(['auth','role:AUDITOR'])
     ->name('auditor.proyectos');
+Route::get('/auditor/proyectos/{proyecto}', [\App\Http\Controllers\AuditorController::class, 'showProyecto'])
+    ->middleware(['auth','role:AUDITOR'])
+    ->name('auditor.proyectos.show');
+Route::patch('/auditor/proyectos/{proyecto}/publicacion', [\App\Http\Controllers\AuditorController::class, 'updateProyectoPublicacion'])
+    ->middleware(['auth','role:AUDITOR'])
+    ->name('auditor.proyectos.publicacion');
 
 // Panel de CREADOR
 Route::get('/creator', [\App\Http\Controllers\CreatorController::class, 'index'])

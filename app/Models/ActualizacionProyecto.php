@@ -25,4 +25,9 @@ class ActualizacionProyecto extends Model
         'es_hito' => 'boolean',
         'adjuntos' => 'array',
     ];
+
+    public function proyecto()
+    {
+        return $this->belongsTo(Proyecto::class);
+    }
 }
