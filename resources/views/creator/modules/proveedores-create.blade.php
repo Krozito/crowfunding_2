@@ -38,7 +38,7 @@
                 </div>
                 <div class="md:col-span-2">
                     <label class="text-sm text-zinc-300">Proyecto asociado (opcional)</label>
-                    <select name="proyecto_id" class="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400">
+                    <select name="proyecto_id" class="mt-1 w-full rounded-xl border border-white/10 bg-zinc-900/80 px-4 py-3 text-sm text-white focus:border-emerald-400 focus:ring-emerald-400">
                         <option value="">Sin vincular</option>
                         @foreach ($proyectos as $proyecto)
                             <option value="{{ $proyecto->id }}">{{ $proyecto->titulo }}</option>
@@ -46,7 +46,7 @@
                     </select>
                 </div>
                 <div class="md:col-span-2 flex justify-end">
-                    <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500">
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/30 hover:bg-emerald-500">
                         Guardar proveedor
                     </button>
                 </div>

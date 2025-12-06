@@ -17,7 +17,7 @@
     </div>
 
     <div class="space-y-10 px-4 sm:px-6 lg:px-8">
-        <section id="overview" class="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-emerald-600 to-lime-600 px-8 py-10 shadow-2xl">
+        <section id="overview" class="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-emerald-800 to-teal-700 px-8 py-10 shadow-2xl">
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.25),_transparent_45%)]"></div>
             <div class="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                 <div>

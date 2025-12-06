@@ -19,7 +19,7 @@
         </div>
     @endif
 
-    <section class="rounded-3xl border border-white/10 bg-zinc-900/70 p-8 shadow-2xl ring-1 ring-indigo-500/10 space-y-4">
+    <section class="rounded-3xl border border-white/10 bg-gradient-to-r from-emerald-600/25 via-zinc-900/70 to-zinc-900/70 p-8 shadow-2xl ring-1 ring-indigo-500/10 space-y-4">
         <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Proyectos</p>
@@ -27,8 +27,7 @@
                 <p class="text-sm text-zinc-400">Visualiza recaudado, escrow, liberado, gastado y solicita desembolsos guiados.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2 text-xs text-zinc-300">
-                <span class="rounded-full bg-white/5 px-3 py-1">Total proyectos: {{ $proyectos->count() }}</span>
-                <a href="{{ route('creador.fondos.historial', ['proyecto' => $selectedProjectId]) }}" class="inline-flex items-center gap-2 rounded-xl border border-white/10 px-3 py-2 text-white hover:border-indigo-400/60">
+                <a href="{{ route('creador.fondos.historial', ['proyecto' => $selectedProjectId]) }}" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-3 py-2 text-white hover:bg-emerald-500">
                     Ver historial completo
                 </a>
             </div>
@@ -45,7 +44,7 @@
                     @endforelse
                 </select>
             </div>
-            <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white hover:border-indigo-400/60">
+            <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500">
                 Ver fondos
             </button>
         </form>
@@ -64,7 +63,6 @@
                         <h3 class="text-lg font-bold text-white">Estado del proyecto</h3>
                         <p class="text-sm text-zinc-400">Revisa lo retenido en escrow, liberado, gastado y lo disponible para solicitar.</p>
                     </div>
-                    <span class="rounded-full bg-white/5 px-3 py-1 text-[11px] font-semibold text-zinc-200">Proyecto #{{ $selectedProjectId }}</span>
                 </div>
 
                 <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -125,14 +123,13 @@
             </section>
 
             <section class="rounded-3xl border border-white/10 bg-zinc-900/70 p-6 shadow-2xl ring-1 ring-emerald-500/10 space-y-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Solicitar desembolso</p>
-                        <h3 class="text-lg font-bold text-white">Crea una solicitud</h3>
-                        <p class="text-sm text-zinc-400">Valida monto, hito y adjunta documentacion inicial.</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Solicitar desembolso</p>
+                            <h3 class="text-lg font-bold text-white">Crea una solicitud</h3>
+                            <p class="text-sm text-zinc-400">Valida monto, hito y adjunta documentacion inicial.</p>
+                        </div>
                     </div>
-                    <span class="rounded-full bg-white/5 px-3 py-1 text-[11px] font-semibold text-zinc-200">Disponible: USD {{ number_format($finanzas['disponible'], 2) }}</span>
-                </div>
 
                 <form method="POST" action="{{ route('creador.fondos.solicitudes.store', $selectedProjectId) }}" enctype="multipart/form-data" class="space-y-3">
                     @csrf
@@ -166,7 +163,7 @@
                         <p class="mt-1 text-xs text-zinc-500">Maximo 8MB por archivo.</p>
                     </div>
                     <div class="pt-2">
-                        <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/20 px-4 py-2.5 text-sm font-semibold text-emerald-50 hover:border-emerald-400/60">
+                        <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500">
                             Enviar solicitud
                         </button>
                     </div>

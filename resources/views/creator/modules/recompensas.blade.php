@@ -5,17 +5,17 @@
 
 @section('content')
     <div class="px-4 sm:px-6 lg:px-8 space-y-6">
-        <section class="rounded-3xl border border-white/10 bg-zinc-900/70 p-8 shadow-2xl ring-1 ring-indigo-500/15 space-y-4">
+        <section class="rounded-3xl border border-white/10 bg-gradient-to-r from-emerald-600/25 via-zinc-900/70 to-zinc-900/70 p-8 shadow-2xl ring-1 ring-indigo-500/15 space-y-4">
             <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                     <p class="text-sm text-zinc-400">Administra niveles: crea o edita, ordena/pausa y revisa como se ven.</p>
                     <h2 class="text-2xl font-bold text-white">Panel de recompensas</h2>
                 </div>
                 <div class="flex flex-wrap gap-2 text-xs font-semibold">
-                    <a href="{{ route('creador.recompensas.gestion', ['proyecto' => $selectedProjectId]) }}" class="inline-flex items-center gap-2 rounded-xl border border-white/10 px-4 py-2 text-white hover:border-indigo-400/60">
+                    <a href="{{ route('creador.recompensas.gestion', ['proyecto' => $selectedProjectId]) }}" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-500">
                         gestion recompensas
                     </a>
-                    <a href="{{ route('creador.recompensas.preview', ['proyecto' => $selectedProjectId]) }}" class="inline-flex items-center gap-2 rounded-xl border border-white/10 px-4 py-2 text-white hover:border-indigo-400/60">
+                    <a href="{{ route('creador.recompensas.preview', ['proyecto' => $selectedProjectId]) }}" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-500">
                         Abrir previsualizacion
                     </a>
                 </div>
@@ -32,10 +32,10 @@
                         @endforelse
                     </select>
                 </div>
-                <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white hover:border-indigo-400/60">
-                    Ver recompensas
-                </button>
-            </form>
+            <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500">
+                Ver recompensas
+            </button>
+        </form>
 
             <div class="grid gap-4 lg:grid-cols-[260px,1fr]">
                 <div class="space-y-2">

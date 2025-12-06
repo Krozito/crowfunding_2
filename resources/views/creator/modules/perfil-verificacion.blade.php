@@ -22,7 +22,7 @@
             </div>
         @endif
 
-        <section class="rounded-3xl border border-white/10 bg-zinc-900/70 p-8 shadow-2xl ring-1 ring-indigo-500/10 space-y-4">
+        <section class="rounded-3xl border border-white/10 bg-gradient-to-r from-emerald-600/25 via-zinc-900/70 to-zinc-900/70 p-8 shadow-2xl ring-1 ring-indigo-500/10 space-y-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Verificacion</p>
@@ -42,23 +42,23 @@
                     <div class="grid gap-3 sm:grid-cols-2">
                         <div>
                             <label class="text-sm text-zinc-300">Documento frontal *</label>
-                            <input type="file" name="documento_frontal" required class="mt-1 block w-full text-sm text-white file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-500/20 file:px-4 file:py-2 file:text-indigo-100 hover:file:bg-indigo-500/30">
+                            <input type="file" name="documento_frontal" required class="mt-1 block w-full text-sm text-white file:mr-4 file:rounded-lg file:border-0 file:bg-emerald-500/20 file:px-4 file:py-2 file:text-emerald-100 hover:file:bg-emerald-500/30">
                         </div>
                         <div>
                             <label class="text-sm text-zinc-300">Documento reverso *</label>
-                            <input type="file" name="documento_reverso" required class="mt-1 block w-full text-sm text-white file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-500/20 file:px-4 file:py-2 file:text-indigo-100 hover:file:bg-indigo-500/30">
+                            <input type="file" name="documento_reverso" required class="mt-1 block w-full text-sm text-white file:mr-4 file:rounded-lg file:border-0 file:bg-emerald-500/20 file:px-4 file:py-2 file:text-emerald-100 hover:file:bg-emerald-500/30">
                         </div>
                     </div>
                     <div>
                         <label class="text-sm text-zinc-300">Selfie (opcional)</label>
-                        <input type="file" name="selfie" class="mt-1 block w-full text-sm text-white file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-500/20 file:px-4 file:py-2 file:text-indigo-100 hover:file:bg-indigo-500/30">
+                        <input type="file" name="selfie" class="mt-1 block w-full text-sm text-white file:mr-4 file:rounded-lg file:border-0 file:bg-emerald-500/20 file:px-4 file:py-2 file:text-emerald-100 hover:file:bg-emerald-500/30">
                     </div>
                     <div>
                         <label class="text-sm text-zinc-300">Nota para administracion</label>
                         <textarea name="nota" rows="2" class="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400" placeholder="Datos adicionales, pais de emision, referencia...">{{ old('nota') }}</textarea>
                     </div>
                     <div class="pt-2">
-                        <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-500/30 bg-indigo-500/20 px-4 py-2.5 text-sm font-semibold text-indigo-50 hover:border-indigo-400/60">
+                        <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500">
                             Enviar solicitud a administracion
                         </button>
                     </div>
