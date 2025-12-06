@@ -1,7 +1,7 @@
 @extends('auditor.layouts.panel')
 
 @section('title', 'Panel de Auditor')
-@section('active', 'dashboard')
+@section('active', 'general')
 @section('back_url', '')
 
 @section('content')
@@ -16,27 +16,6 @@
         </form>
     </div>
 
-    @php
-        $metrics = $metrics ?? [
-            'auditoriasActivas' => 4,
-            'hallazgosPendientes' => 12,
-            'kycPendientes' => 7,
-            'alertasCriticas' => 2,
-            'solicitudesRevisadas' => 18,
-        ];
-        $hallazgos = $hallazgos ?? [
-            ['titulo' => 'Reembolso sin soporte', 'proyecto' => 'Proyecto Verde', 'fecha' => '2025-06-01', 'riesgo' => 'Alto'],
-            ['titulo' => 'KYC pendiente de colaborador', 'proyecto' => 'TechHub', 'fecha' => '2025-06-02', 'riesgo' => 'Medio'],
-            ['titulo' => 'Gasto fuera de categoria', 'proyecto' => 'Arte Vivo', 'fecha' => '2025-05-30', 'riesgo' => 'Medio'],
-        ];
-        $controles = $controles ?? [
-            ['label' => 'Revisar reportes mensuales (HU12-HU15)', 'estado' => 'En curso'],
-            ['label' => 'Validar soportes de gastos mayores a $2,500', 'estado' => 'Pendiente'],
-            ['label' => 'Cruzar alertas AML/KYC con proveedores nuevos', 'estado' => 'Pendiente'],
-            ['label' => 'Cerrar hallazgos abiertos con evidencias', 'estado' => 'En curso'],
-        ];
-    @endphp
-
     <div class="space-y-10 px-4 sm:px-6 lg:px-8">
         <section id="overview" class="relative overflow-hidden rounded-[22px] admin-hero px-8 py-10 shadow-2xl ring-1 ring-white/15">
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.22),_transparent_45%)] blur-[2px]"></div>
@@ -45,165 +24,156 @@
                     <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/70">Vigilancia y cumplimiento</p>
                     <h1 class="mt-2 text-3xl font-extrabold tracking-wide text-white">Panel de auditoria continua</h1>
                     <p class="mt-3 max-w-2xl text-base text-white/75">
-                        Monitorea hallazgos, KYC y flujos de fondos. Prioriza riesgos y documenta acciones correctivas en un solo lugar.
+                        Monitorea solicitudes, pagos y verificaciones con datos reales. Prioriza lo pendiente y actúa con evidencia.
                     </p>
                 </div>
                 <div class="grid gap-3 rounded-2xl bg-white/10 p-6 text-white backdrop-blur-sm shadow-inner">
                     <div class="flex items-center gap-3">
                         <div>
-                            <p class="text-xs uppercase tracking-[0.35em] text-white/70">Auditorias activas</p>
-                            <p class="text-4xl font-extrabold">{{ $metrics['auditoriasActivas'] }}</p>
+                            <p class="text-xs uppercase tracking-[0.35em] text-white/70">Solicitudes pendientes</p>
+                            <p class="text-4xl font-extrabold">{{ $kpis['solicitudes_pendientes'] ?? 0 }}</p>
                         </div>
                     </div>
                     <div class="border-t border-white/10 pt-3 flex items-center gap-3">
                         <div>
-                            <p class="text-xs uppercase tracking-[0.35em] text-white/70">Alertas criticas</p>
-                            <p class="text-4xl font-extrabold">{{ $metrics['alertasCriticas'] }}</p>
+                            <p class="text-xs uppercase tracking-[0.35em] text-white/70">Pagos registrados</p>
+                            <p class="text-4xl font-extrabold">{{ $kpis['pagos_registrados'] ?? 0 }}</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="auditorias" class="space-y-4">
+        <section id="general" class="space-y-4">
             <div class="flex flex-col gap-2">
-                <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">Auditorias</p>
-                <h2 class="text-2xl font-bold text-white">Estado de las revisiones</h2>
-                <p class="text-sm text-zinc-400">Cobertura de casos, hallazgos y avances documentados.</p>
+                <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">Modulo 1</p>
+                <h2 class="text-2xl font-bold text-white">Panel general del auditor</h2>
+                <p class="text-sm text-zinc-400">KPI y colas operativas basadas en la base de datos.</p>
             </div>
             <div class="grid gap-4 md:grid-cols-4">
                 <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p class="text-xs uppercase text-zinc-400">Hallazgos abiertos</p>
-                    <p class="text-3xl font-bold text-white">{{ $metrics['hallazgosPendientes'] }}</p>
-                    <p class="text-xs text-zinc-500">Pendientes de evidencia</p>
+                    <p class="text-xs uppercase text-zinc-400">Solicitudes pendientes</p>
+                    <p class="text-3xl font-bold text-white mt-1">{{ $kpis['solicitudes_pendientes'] ?? 0 }}</p>
+                    <p class="text-xs text-zinc-500">Desembolsos por validar</p>
                 </div>
                 <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p class="text-xs uppercase text-zinc-400">Solicitudes revisadas</p>
-                    <p class="text-3xl font-bold text-indigo-200">{{ $metrics['solicitudesRevisadas'] }}</p>
-                    <p class="text-xs text-zinc-500">Ultimos 14 dias</p>
+                    <p class="text-xs uppercase text-zinc-400">Solicitudes aprobadas</p>
+                    <p class="text-3xl font-bold text-white mt-1">{{ $kpis['solicitudes_aprobadas'] ?? 0 }}</p>
+                    <p class="text-xs text-zinc-500">Incluye liberadas/pagadas</p>
                 </div>
                 <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p class="text-xs uppercase text-zinc-400">KYC pendientes</p>
-                    <p class="text-3xl font-bold text-sky-200">{{ $metrics['kycPendientes'] }}</p>
-                    <p class="text-xs text-zinc-500">En cola de identidad</p>
+                    <p class="text-xs uppercase text-zinc-400">Pagos registrados</p>
+                    <p class="text-3xl font-bold text-white mt-1">{{ $kpis['pagos_registrados'] ?? 0 }}</p>
+                    <p class="text-xs text-zinc-500">Con proveedor asociado</p>
                 </div>
-                <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p class="text-xs uppercase text-zinc-400">Alertas criticas</p>
-                    <p class="text-3xl font-bold text-amber-200">{{ $metrics['alertasCriticas'] }}</p>
-                    <p class="text-xs text-zinc-500">Requieren atencion inmediata</p>
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                    <p class="text-xs uppercase text-zinc-400">Verificaciones pendientes</p>
+                    <p class="text-3xl font-bold text-white mt-1">{{ $kpis['kyc_pendientes'] ?? 0 }}</p>
+                    <p class="text-xs text-zinc-500">Solicitudes de identidad</p>
                 </div>
             </div>
 
-            <div class="mt-6 grid gap-6 lg:grid-cols-2">
-                <div class="rounded-2xl border border-white/10 bg-zinc-900/70 p-5 admin-accent-card">
+            <div class="grid gap-6 lg:grid-cols-3">
+                <div class="rounded-2xl border border-white/10 bg-zinc-900/70 p-5 space-y-4">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-xs uppercase tracking-[0.3em] text-zinc-500">Hallazgos recientes</p>
-                            <h3 class="text-lg font-semibold text-white">Resumen de observaciones</h3>
+                            <p class="text-xs uppercase tracking-[0.3em] text-zinc-500">Desembolsos</p>
+                            <h3 class="text-lg font-semibold text-white">Pendientes por validar</h3>
                         </div>
-                        <a href="#reportes" class="text-xs text-indigo-200 hover:text-white">Documentar</a>
+                        <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white">{{ $solicitudesPendientes->count() }}</span>
                     </div>
-                    <div class="mt-4 space-y-3 text-sm text-zinc-300">
-                        @foreach ($hallazgos as $item)
-                            <div class="flex items-start gap-3 rounded-xl border border-white/5 bg-white/5 px-4 py-3">
-                                <span class="mt-1 inline-flex h-2.5 w-2.5 rounded-full {{ $item['riesgo'] === 'Alto' ? 'bg-amber-400' : 'bg-indigo-300' }}"></span>
-                                <div class="space-y-1">
-                                    <p class="font-semibold text-white">{{ $item['titulo'] }}</p>
-                                    <p class="text-xs text-zinc-400">{{ $item['proyecto'] }} • {{ $item['fecha'] }} • Riesgo {{ $item['riesgo'] }}</p>
-                                </div>
+                    <div class="space-y-3 text-sm text-zinc-300">
+                        @forelse ($solicitudesPendientes as $item)
+                            <div class="rounded-xl border border-white/5 bg-white/5 px-4 py-3">
+                                <p class="font-semibold text-white">{{ $item->proyecto->titulo ?? 'Proyecto' }} - ${{ number_format($item->monto_solicitado, 0, ',', '.') }}</p>
+                                <p class="text-xs text-zinc-400">{{ $item->hito ?? 'Hito' }} • {{ $item->estado }}</p>
                             </div>
-                        @endforeach
+                        @empty
+                            <p class="text-xs text-zinc-500">No hay solicitudes pendientes.</p>
+                        @endforelse
                     </div>
                 </div>
-
-                <div id="kyc" class="rounded-2xl border border-white/10 bg-zinc-900/70 p-5">
+                <div class="rounded-2xl border border-white/10 bg-zinc-900/70 p-5 space-y-4">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-xs uppercase tracking-[0.3em] text-zinc-500">Identidad</p>
-                            <h3 class="text-lg font-semibold text-white">KYC pendientes</h3>
+                            <p class="text-xs uppercase tracking-[0.3em] text-zinc-500">Pagos</p>
+                            <h3 class="text-lg font-semibold text-white">Últimos registrados</h3>
                         </div>
-                        <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white">
-                            {{ $metrics['kycPendientes'] }} en cola
-                        </span>
+                        <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white">{{ $pagosRecientes->count() }}</span>
                     </div>
-                    <div class="mt-4 grid gap-3 text-sm text-zinc-300">
-                        <div class="flex items-center justify-between rounded-xl border border-white/5 bg-white/5 px-4 py-3">
-                            <div>
-                                <p class="font-semibold text-white">Validar IDs subidos</p>
-                                <p class="text-xs text-zinc-400">Cruzar selfie vs documento</p>
+                    <div class="space-y-3 text-sm text-zinc-300">
+                        @forelse ($pagosRecientes as $pago)
+                            <div class="rounded-xl border border-white/5 bg-white/5 px-4 py-3">
+                                <p class="font-semibold text-white">${{ number_format($pago->monto, 0, ',', '.') }} — {{ $pago->proveedor->nombre_proveedor ?? 'Proveedor' }}</p>
+                                <p class="text-xs text-zinc-400">{{ optional($pago->solicitud->proyecto)->titulo ?? 'Proyecto' }} • {{ $pago->fecha_pago?->format('Y-m-d') }}</p>
                             </div>
-                            <span class="text-[11px] font-semibold uppercase tracking-[0.22em] text-indigo-200">Prioridad alta</span>
-                        </div>
-                        <div class="flex items-center justify-between rounded-xl border border-white/5 bg-white/5 px-4 py-3">
-                            <div>
-                                <p class="font-semibold text-white">Revisar coincidencias AML</p>
-                                <p class="text-xs text-zinc-400">Listas restrictivas y sanciones</p>
-                            </div>
-                            <span class="text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200">Pendiente</span>
-                        </div>
-                        <div class="flex items-center justify-between rounded-xl border border-white/5 bg-white/5 px-4 py-3">
-                            <div>
-                                <p class="font-semibold text-white">Aprobar KYC confiables</p>
-                                <p class="text-xs text-zinc-400">Registrar evidencia y hash</p>
-                            </div>
-                            <span class="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-200">Listo hoy</span>
-                        </div>
+                        @empty
+                            <p class="text-xs text-zinc-500">No hay pagos registrados.</p>
+                        @endforelse
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <section id="riesgos" class="grid gap-6 lg:grid-cols-3">
-            <div class="lg:col-span-2 rounded-3xl border border-white/10 bg-zinc-900/70 p-6 shadow-xl">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">Matriz de riesgo</p>
-                        <h3 class="text-lg font-semibold text-white">Alertas y seguimiento</h3>
-                    </div>
-                    <a href="#overview" class="text-xs text-indigo-200 hover:text-white">Actualizar</a>
-                </div>
-                <div class="mt-4 grid gap-3 text-sm text-zinc-300">
-                    <div class="flex items-center justify-between rounded-xl border border-amber-400/40 bg-amber-500/10 px-4 py-3">
+                <div class="rounded-2xl border border-white/10 bg-zinc-900/70 p-5 space-y-4">
+                    <div class="flex items-center justify-between">
                         <div>
-                            <p class="font-semibold text-white">Flujo sospechoso detectado</p>
-                            <p class="text-xs text-amber-100/90">Monto dividido en multiples transferencias</p>
+                            <p class="text-xs uppercase tracking-[0.3em] text-zinc-500">Verificaciones</p>
+                            <h3 class="text-lg font-semibold text-white">Identidad pendientes</h3>
                         </div>
-                        <span class="text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-100">Riesgo alto</span>
+                        <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white">{{ $verificacionesPendientes->count() }}</span>
                     </div>
-                    <div class="flex items-center justify-between rounded-xl border border-indigo-400/40 bg-indigo-500/10 px-4 py-3">
-                        <div>
-                            <p class="font-semibold text-white">Proveedor sin comprobantes</p>
-                            <p class="text-xs text-indigo-100/90">Solicitar soporte y validar RFC</p>
-                        </div>
-                        <span class="text-[11px] font-semibold uppercase tracking-[0.22em] text-indigo-100">Riesgo medio</span>
-                    </div>
-                    <div class="flex items-center justify-between rounded-xl border border-emerald-400/40 bg-emerald-500/10 px-4 py-3">
-                        <div>
-                            <p class="font-semibold text-white">Reversion completada</p>
-                            <p class="text-xs text-emerald-100/90">Caso cerrado con evidencia almacenada</p>
-                        </div>
-                        <span class="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-100">Cerrado</span>
+                    <div class="space-y-3 text-sm text-zinc-300">
+                        @forelse ($verificacionesPendientes as $verif)
+                            <div class="rounded-xl border border-white/5 bg-white/5 px-4 py-3">
+                                <p class="font-semibold text-white">{{ $verif->user->nombre_completo ?? $verif->user->name ?? 'Usuario' }}</p>
+                                <p class="text-xs text-zinc-400">{{ $verif->estado }} • {{ $verif->created_at?->format('Y-m-d') }}</p>
+                            </div>
+                        @empty
+                            <p class="text-xs text-zinc-500">No hay verificaciones pendientes.</p>
+                        @endforelse
                     </div>
                 </div>
             </div>
 
-            <div id="reportes" class="rounded-3xl border border-white/10 bg-zinc-900/70 p-6 shadow-xl admin-accent-card">
-                <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">Checklist</p>
-                <h3 class="text-lg font-semibold text-white">Acciones de control</h3>
-                <div class="mt-4 space-y-3 text-sm text-zinc-300">
-                    @foreach ($controles as $control)
-                        <div class="flex items-start gap-3 rounded-xl border border-white/5 bg-white/5 px-4 py-3">
-                            <input type="checkbox" class="mt-1 h-4 w-4 rounded border-white/20 bg-transparent text-indigo-400 focus:ring-indigo-500" />
-                            <div class="flex-1">
-                                <p class="font-semibold text-white">{{ $control['label'] }}</p>
-                                <p class="text-[11px] uppercase tracking-[0.22em] {{ $control['estado'] === 'Pendiente' ? 'text-amber-200' : 'text-indigo-200' }}">{{ $control['estado'] }}</p>
-                            </div>
+            <div class="grid gap-6 lg:grid-cols-3">
+                <div class="rounded-2xl border border-white/10 bg-zinc-900/70 p-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.3em] text-zinc-500">Proyectos</p>
+                            <h3 class="text-lg font-semibold text-white">Recientes</h3>
                         </div>
-                    @endforeach
+                        <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white">{{ $proyectosActivos->count() }}</span>
+                    </div>
+                    <div class="space-y-3 text-sm text-zinc-300">
+                        @forelse ($proyectosActivos as $proy)
+                            <div class="rounded-xl border border-white/5 bg-white/5 px-4 py-3">
+                                <p class="font-semibold text-white">{{ $proy->titulo }}</p>
+                                <p class="text-xs text-zinc-400">Estado: {{ $proy->estado ?? 'N/D' }} • {{ $proy->created_at?->format('Y-m-d') }}</p>
+                            </div>
+                        @empty
+                            <p class="text-xs text-zinc-500">Sin proyectos registrados.</p>
+                        @endforelse
+                    </div>
                 </div>
-                <div class="mt-5 flex flex-col gap-3">
-                    <button class="admin-btn admin-btn-primary">Registrar reporte</button>
-                    <button class="admin-btn admin-btn-ghost">Exportar evidencia</button>
+                <div class="rounded-2xl border border-white/10 bg-zinc-900/70 p-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.3em] text-zinc-500">Solicitudes</p>
+                            <h3 class="text-lg font-semibold text-white">Vista detallada</h3>
+                        </div>
+                        <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white">{{ ($kpis['solicitudes_pendientes'] ?? 0) + ($kpis['solicitudes_aprobadas'] ?? 0) }}</span>
+                    </div>
+                    <p class="text-sm text-zinc-400">Consulta todas las solicitudes en el modulo de desembolsos.</p>
+                    <a href="{{ route('auditor.desembolsos') }}" class="admin-btn admin-btn-primary text-xs w-fit">Ir a desembolsos</a>
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-zinc-900/70 p-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.3em] text-zinc-500">Pagos</p>
+                            <h3 class="text-lg font-semibold text-white">Detalle de comprobantes</h3>
+                        </div>
+                        <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white">{{ $pagosRecientes->count() }}</span>
+                    </div>
+                    <p class="text-sm text-zinc-400">Revisa facturas y soporte directamente.</p>
+                    <a href="{{ route('auditor.comprobantes') }}" class="admin-btn admin-btn-ghost text-xs w-fit">Ir a comprobantes</a>
                 </div>
             </div>
         </section>

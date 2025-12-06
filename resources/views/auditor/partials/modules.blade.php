@@ -1,13 +1,15 @@
 @php
-    $accentKey = $active ?? 'dashboard';
+    $accentKey = $active ?? 'general';
     $accentPalette = [
+        'general' => ['from' => '#7c3aed', 'to' => '#6366f1', 'soft' => 'rgba(124,58,237,0.12)', 'ring' => 'rgba(124,58,237,0.55)'],
+        'comprobantes' => ['from' => '#0ea5e9', 'to' => '#22d3ee', 'soft' => 'rgba(14,165,233,0.12)', 'ring' => 'rgba(34,211,238,0.55)'],
+        'desembolsos' => ['from' => '#06b6d4', 'to' => '#22c55e', 'soft' => 'rgba(6,182,212,0.12)', 'ring' => 'rgba(34,197,94,0.55)'],
+        'sospechosos' => ['from' => '#f97316', 'to' => '#ef4444', 'soft' => 'rgba(249,115,22,0.12)', 'ring' => 'rgba(239,68,68,0.55)'],
+        'hitos' => ['from' => '#a855f7', 'to' => '#6366f1', 'soft' => 'rgba(168,85,247,0.12)', 'ring' => 'rgba(99,102,241,0.55)'],
+        'proyectos' => ['from' => '#10b981', 'to' => '#14b8a6', 'soft' => 'rgba(16,185,129,0.12)', 'ring' => 'rgba(16,185,129,0.55)'],
         'dashboard' => ['from' => '#7c3aed', 'to' => '#6366f1', 'soft' => 'rgba(124,58,237,0.12)', 'ring' => 'rgba(124,58,237,0.55)'],
-        'auditorias' => ['from' => '#8b5cf6', 'to' => '#22d3ee', 'soft' => 'rgba(139,92,246,0.12)', 'ring' => 'rgba(34,211,238,0.55)'],
-        'kyc' => ['from' => '#22d3ee', 'to' => '#0ea5e9', 'soft' => 'rgba(34,211,238,0.12)', 'ring' => 'rgba(14,165,233,0.55)'],
-        'riesgos' => ['from' => '#f59e0b', 'to' => '#ef4444', 'soft' => 'rgba(245,158,11,0.12)', 'ring' => 'rgba(239,68,68,0.55)'],
-        'reportes' => ['from' => '#06b6d4', 'to' => '#6366f1', 'soft' => 'rgba(6,182,212,0.12)', 'ring' => 'rgba(6,182,212,0.55)'],
     ];
-    $accent = $accentPalette[$accentKey] ?? $accentPalette['dashboard'];
+    $accent = $accentPalette[$accentKey] ?? $accentPalette['general'];
 @endphp
 <style>
     .admin-scroll {
@@ -232,43 +234,49 @@ document.addEventListener('DOMContentLoaded', () => {
         $active = $accentKey;
         $linkClass = 'admin-link';
         $activeClass = 'active';
-        $dashboardAnchor = route('auditor.dashboard');
     @endphp
     <nav class="flex-1 px-3 py-3 space-y-1">
-        <a href="{{ $dashboardAnchor }}" class="{{ $linkClass }} {{ $active === 'dashboard' ? $activeClass : '' }}">
+        <a href="{{ route('auditor.dashboard') }}#general" class="{{ $linkClass }} {{ $active === 'general' ? $activeClass : '' }}">
             <span class="flex items-center gap-2">
                 <span class="inline-flex h-2 w-2 rounded-full bg-indigo-400"></span>
-                Dashboard
+                Panel general
             </span>
             <span class="text-xs text-indigo-100/90">Inicio</span>
         </a>
-        <a href="{{ $dashboardAnchor }}#auditorias" class="{{ $linkClass }} {{ $active === 'auditorias' ? $activeClass : '' }}">
-            <span class="flex items-center gap-2">
-                <span class="inline-flex h-2 w-2 rounded-full bg-purple-300"></span>
-                Auditorias
-            </span>
-            <span class="text-xs text-indigo-100/90">Ir</span>
-        </a>
-        <a href="{{ $dashboardAnchor }}#kyc" class="{{ $linkClass }} {{ $active === 'kyc' ? $activeClass : '' }}">
+        <a href="{{ route('auditor.comprobantes') }}" class="{{ $linkClass }} {{ $active === 'comprobantes' ? $activeClass : '' }}">
             <span class="flex items-center gap-2">
                 <span class="inline-flex h-2 w-2 rounded-full bg-sky-300"></span>
-                Identidad y KYC
+                Comprobantes
             </span>
             <span class="text-xs text-indigo-100/90">Ir</span>
         </a>
-        <a href="{{ $dashboardAnchor }}#riesgos" class="{{ $linkClass }} {{ $active === 'riesgos' ? $activeClass : '' }}">
-            <span class="flex items-center gap-2">
-                <span class="inline-flex h-2 w-2 rounded-full bg-amber-300"></span>
-                Riesgos y alertas
-            </span>
-            <span class="text-xs text-indigo-100/90">Ir</span>
-        </a>
-        <a href="{{ $dashboardAnchor }}#reportes" class="{{ $linkClass }} {{ $active === 'reportes' ? $activeClass : '' }}">
+        <a href="{{ route('auditor.desembolsos') }}" class="{{ $linkClass }} {{ $active === 'desembolsos' ? $activeClass : '' }}">
             <span class="flex items-center gap-2">
                 <span class="inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
-                Reportes
+                Desembolsos
             </span>
             <span class="text-xs text-indigo-100/90">Ir</span>
+        </a>
+        <a href="{{ route('auditor.reportes') }}" class="{{ $linkClass }} {{ $active === 'sospechosos' ? $activeClass : '' }}">
+            <span class="flex items-center gap-2">
+                <span class="inline-flex h-2 w-2 rounded-full bg-amber-300"></span>
+                Reportes sospechosos
+            </span>
+            <span class="text-xs text-indigo-100/90">Ir</span>
+        </a>
+        <a href="{{ route('auditor.hitos') }}" class="{{ $linkClass }} {{ $active === 'hitos' ? $activeClass : '' }}">
+            <span class="flex items-center gap-2">
+                <span class="inline-flex h-2 w-2 rounded-full bg-purple-200"></span>
+                Hitos
+            </span>
+            <span class="text-xs text-indigo-100/90">Ir</span>
+        </a>
+        <a href="{{ route('auditor.proyectos') }}" class="{{ $linkClass }} {{ $active === 'proyectos' ? $activeClass : '' }}">
+            <span class="flex items-center gap-2">
+                <span class="inline-flex h-2 w-2 rounded-full bg-emerald-200"></span>
+                Auditoria de proyectos
+            </span>
+            <span class="text-xs text-indigo-100/90">Linea de tiempo</span>
         </a>
     </nav>
     <div class="border-t border-white/5 px-4 py-4 text-xs leading-tight text-slate-400">

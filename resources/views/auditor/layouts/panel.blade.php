@@ -41,7 +41,7 @@
     <main class="mx-auto w-full max-w-full px-0 pt-0 pb-6 space-y-8">
         <div class="grid gap-0 lg:grid-cols-[280px_1fr] lg:min-h-[calc(100vh-64px)] lg:overflow-hidden admin-shell">
             <aside class="lg:sticky lg:top-0 admin-sidebar">
-                @include('auditor.partials.modules', ['active' => trim($__env->yieldContent('active')) ?: 'dashboard'])
+                @include('auditor.partials.modules', ['active' => trim($__env->yieldContent('active')) ?: 'general'])
             </aside>
 
             <div class="space-y-8 lg:overflow-y-auto lg:h-full lg:pr-2 admin-scroll admin-main">

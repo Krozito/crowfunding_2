@@ -108,6 +108,21 @@ Route::get('/admin/verificaciones/{solicitud}/archivo/{tipo}', [\App\Http\Contro
 Route::get('/auditor', [\App\Http\Controllers\AuditorController::class, 'index'])
     ->middleware(['auth','role:AUDITOR'])
     ->name('auditor.dashboard');
+Route::get('/auditor/comprobantes', [\App\Http\Controllers\AuditorController::class, 'comprobantes'])
+    ->middleware(['auth','role:AUDITOR'])
+    ->name('auditor.comprobantes');
+Route::get('/auditor/desembolsos', [\App\Http\Controllers\AuditorController::class, 'desembolsos'])
+    ->middleware(['auth','role:AUDITOR'])
+    ->name('auditor.desembolsos');
+Route::get('/auditor/reportes', [\App\Http\Controllers\AuditorController::class, 'reportes'])
+    ->middleware(['auth','role:AUDITOR'])
+    ->name('auditor.reportes');
+Route::get('/auditor/hitos', [\App\Http\Controllers\AuditorController::class, 'hitos'])
+    ->middleware(['auth','role:AUDITOR'])
+    ->name('auditor.hitos');
+Route::get('/auditor/proyectos', [\App\Http\Controllers\AuditorController::class, 'proyectos'])
+    ->middleware(['auth','role:AUDITOR'])
+    ->name('auditor.proyectos');
 
 // Panel de CREADOR
 Route::get('/creator', [\App\Http\Controllers\CreatorController::class, 'index'])
