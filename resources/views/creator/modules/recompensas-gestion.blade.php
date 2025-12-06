@@ -14,7 +14,7 @@
                     <p class="text-sm text-zinc-400">Sube/baja prioridad, pausa o elimina. Controla stock por proyecto.</p>
                 </div>
                 <div class="flex items-center gap-2 text-xs text-zinc-300">
-                    <a href="{{ route('creador.recompensas.create') }}" class="inline-flex items-center gap-2 rounded-xl border border-white/10 px-4 py-2 text-white hover:border-indigo-400/60">Crear nueva recompensa</a>
+                    <a href="{{ route('creador.recompensas.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-500">Crear nueva recompensa</a>
                 </div>
             </div>
 
@@ -37,7 +37,7 @@
                         <option value="pausado" @selected($estadoFiltro === 'pausado')>Pausado</option>
                     </select>
                 </div>
-                <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white hover:border-indigo-400/60">
+                <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500">
                     Filtrar
                 </button>
             </form>
@@ -79,16 +79,16 @@
                         </div>
 
                         <div class="mt-3 flex flex-wrap gap-2 text-xs font-semibold">
-                            <a href="{{ route('creador.recompensas.edit', $nivel['id']) }}" class="inline-flex items-center gap-2 rounded-xl border border-white/15 px-3 py-2 text-white hover:border-indigo-400/60">Editar</a>
+                            <a href="{{ route('creador.recompensas.edit', $nivel['id']) }}" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-3 py-2 text-white hover:bg-emerald-500">Editar</a>
                             <form method="POST" action="{{ route('creador.recompensas.estado', $nivel['id']) }}">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit" class="inline-flex items-center gap-2 rounded-xl border border-amber-400/30 px-3 py-2 text-amber-100 hover:border-amber-300/50">{{ $nivel['estado'] === 'activo' ? 'Pausar' : 'Reactivar' }}</button>
+                                <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-3 py-2 text-white hover:bg-emerald-500">{{ $nivel['estado'] === 'activo' ? 'Pausar' : 'Reactivar' }}</button>
                             </form>
                             <form method="POST" action="{{ route('creador.recompensas.destroy', $nivel['id']) }}" onsubmit="return confirm('Eliminar esta recompensa?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="inline-flex items-center gap-2 rounded-xl border border-red-500/30 px-3 py-2 text-red-100 hover:border-red-400/60">Eliminar</button>
+                                <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-3 py-2 text-white hover:bg-emerald-500">Eliminar</button>
                             </form>
                         </div>
                     </article>

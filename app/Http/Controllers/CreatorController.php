@@ -48,11 +48,36 @@ class CreatorController extends Controller
         return view('creator.dashboard', compact('metrics'));
     }
 
-    public function proyectos(): View
+    public function proyectos(Request $request): View
     {
-        $proyectos = Proyecto::where('creador_id', auth()->id())->latest()->get();
+        $search = $request->query('q');
+        $estado = $request->query('estado');
 
-        return view('creator.modules.proyectos', compact('proyectos'));
+        $proyectos = Proyecto::where('creador_id', auth()->id())
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($qq) use ($search) {
+                    $qq->where('titulo', 'like', "%{$search}%")
+                       ->orWhere('descripcion_proyecto', 'like', "%{$search}%")
+                       ->orWhere('categoria', 'like', "%{$search}%");
+                });
+            })
+            ->when($estado, fn($q) => $q->where('estado', $estado))
+            ->latest()
+            ->get();
+
+        return view('creator.modules.proyectos', compact('proyectos', 'search', 'estado'));
+    }
+
+    public function proyectosCrear(): View
+    {
+        return view('creator.modules.proyectos-create');
+    }
+
+    public function proyectosEditar(Proyecto $proyecto): View
+    {
+        $this->authorizeProyecto($proyecto, auth()->id());
+
+        return view('creator.modules.proyectos-edit', compact('proyecto'));
     }
 
     public function recompensas(Request $request): View
@@ -532,6 +557,15 @@ class CreatorController extends Controller
         ]);
 
         return redirect()->route('creador.proveedores')->with('status', 'Proveedor actualizado.');
+    }
+
+    public function deleteProveedor(Proveedor $proveedor): RedirectResponse
+    {
+        abort_unless($proveedor->creador_id === auth()->id(), 403);
+
+        $proveedor->delete();
+
+        return redirect()->route('creador.proveedores')->with('status', 'Proveedor eliminado.');
     }
 
     public function storeProveedorHistorial(Request $request, Proveedor $proveedor): RedirectResponse

@@ -31,10 +31,10 @@
                     <p class="text-xs text-zinc-500">Proyecto: {{ $proveedor->proyecto->titulo ?? 'Sin vincular' }}</p>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <a href="{{ route('creador.proveedores') }}" class="inline-flex items-center gap-2 rounded-xl border border-white/10 px-4 py-2 text-xs font-semibold text-white hover:border-indigo-400/60 hover:text-indigo-100">
+                    <a href="{{ route('creador.proveedores') }}" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-500">
                         Ver listado
                     </a>
-                    <a href="{{ route('creador.proveedores.edit', $proveedor) }}" class="inline-flex items-center gap-2 rounded-xl border border-white/10 px-4 py-2 text-xs font-semibold text-white hover:border-indigo-400/60 hover:text-indigo-100">
+                    <a href="{{ route('creador.proveedores.edit', $proveedor) }}" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-500">
                         Editar proveedor
                     </a>
                 </div>
@@ -77,7 +77,7 @@
             </div>
 
             <details id="form-compra" class="overflow-hidden rounded-2xl border border-white/10 bg-white/5 ring-1 ring-indigo-500/10">
-                <summary class="flex cursor-pointer items-center justify-between gap-2 px-5 py-4 text-sm font-semibold text-white hover:bg-white/5">
+                <summary class="flex cursor-pointer items-center justify-between gap-2 px-5 py-4 text-sm font-semibold text-white rounded-xl bg-emerald-600/80 hover:bg-emerald-600 border border-emerald-500/40">
                     Registrar nueva compra
                     <span class="text-[11px] text-zinc-400">Click para abrir / cerrar</span>
                 </summary>
@@ -101,7 +101,7 @@
                             <input type="number" name="calificacion" min="1" max="10" class="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400" placeholder="8">
                         </div>
                         <div class="md:col-span-2 flex justify-end">
-                            <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500">
+                            <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/30 hover:bg-emerald-500">
                                 Guardar en historial
                             </button>
                         </div>

@@ -19,7 +19,7 @@
         </div>
     @endif
 
-    <section class="rounded-3xl border border-white/10 bg-zinc-900/70 p-8 shadow-2xl ring-1 ring-indigo-500/10 space-y-4">
+    <section class="rounded-3xl border border-white/10 bg-gradient-to-r from-emerald-600/25 via-zinc-900/70 to-zinc-900/70 p-8 shadow-2xl ring-1 ring-indigo-500/10 space-y-4">
         <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Confianza</p>
@@ -34,7 +34,7 @@
                         : 'bg-amber-500/15 text-amber-100 border border-amber-400/30';
                 @endphp
                 <span class="rounded-full px-3 py-1 font-semibold {{ $badge }}">{{ $estado }}</span>
-                <a href="{{ route('creador.perfil.verificacion.form') }}" class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-white hover:border-indigo-400/60">
+                <a href="{{ route('creador.perfil.verificacion.form') }}" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-3 py-2 text-white hover:bg-emerald-500">
                     Solicitar verificacion
                 </a>
             </div>
@@ -96,7 +96,7 @@
                 </div>
 
                 <div class="pt-2">
-                    <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/20 px-4 py-2.5 text-sm font-semibold text-emerald-50 hover:border-emerald-400/60">
+                    <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500">
                         Guardar perfil
                     </button>
                 </div>

@@ -20,14 +20,16 @@
     <header class="sticky top-0 z-30 border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl">
         <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
             <div class="flex items-center gap-4">
+                <a href="{{ url('/') }}" class="flex items-center gap-3">
+                    <img src="/images/brand/mark.png" alt="CrowdUp" class="h-8 w-8" />
+                    <span class="text-xl font-extrabold tracking-tight">Crowd<span class="text-emerald-400">Up</span> Creator</span>
+                </a>
                 @if ($backUrl)
                     <a href="{{ $backUrl }}" class="inline-flex items-center gap-2 text-sm text-zinc-300 hover:text-white">
                         <span aria-hidden="true">&larr;</span> {{ $backLabel }}
                     </a>
                 @else
-                    <span class="inline-flex items-center gap-2 text-sm text-zinc-300">
-                        Panel de creador
-                    </span>
+                    
                 @endif
                 <h1 class="text-lg font-semibold text-white">@yield('title', 'Panel creador')</h1>
             </div>

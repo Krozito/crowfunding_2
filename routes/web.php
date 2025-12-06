@@ -99,6 +99,12 @@ Route::get('/creator', [\App\Http\Controllers\CreatorController::class, 'index']
 Route::get('/creator/proyectos', [\App\Http\Controllers\CreatorController::class, 'proyectos'])
     ->middleware(['auth','role:CREADOR'])
     ->name('creador.proyectos');
+Route::get('/creator/proyectos/crear', [\App\Http\Controllers\CreatorController::class, 'proyectosCrear'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proyectos.create');
+Route::get('/creator/proyectos/{proyecto}/editar', [\App\Http\Controllers\CreatorController::class, 'proyectosEditar'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proyectos.edit');
 
 Route::get('/creator/recompensas', [\App\Http\Controllers\CreatorController::class, 'recompensas'])
     ->middleware(['auth','role:CREADOR'])
@@ -198,6 +204,10 @@ Route::post('/creator/proveedores', [\App\Http\Controllers\CreatorController::cl
 Route::patch('/creator/proveedores/{proveedor}', [\App\Http\Controllers\CreatorController::class, 'updateProveedor'])
     ->middleware(['auth','role:CREADOR'])
     ->name('creador.proveedores.update');
+
+Route::delete('/creator/proveedores/{proveedor}', [\App\Http\Controllers\CreatorController::class, 'deleteProveedor'])
+    ->middleware(['auth','role:CREADOR'])
+    ->name('creador.proveedores.destroy');
 
 Route::post('/creator/proveedores/{proveedor}/historial', [\App\Http\Controllers\CreatorController::class, 'storeProveedorHistorial'])
     ->middleware(['auth','role:CREADOR'])
