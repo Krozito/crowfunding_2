@@ -20,11 +20,7 @@
                 <img src="/images/brand/mark.png" alt="CrowdUp" class="h-8 w-8" />
                 <span class="text-xl font-extrabold tracking-tight">Crowd<span class="text-indigo-400">Up</span> Admin</span>
             </a>
-            <nav class="hidden gap-8 text-sm text-zinc-300 md:flex">
-                <a href="#overview" class="hover:text-white">Overview</a>
-                <a href="#roles" class="hover:text-white">Roles</a>
-                <a href="#roadmap" class="hover:text-white">Roadmap</a>
-            </nav>
+            
             <div class="flex items-center gap-3">
                 <div class="text-right text-xs leading-tight">
                     <p class="font-semibold text-white">{{ Auth::user()->nombre_completo ?? Auth::user()->name }}</p>
@@ -49,7 +45,7 @@
             </aside>
 
             <div class="space-y-10 lg:overflow-y-auto lg:h-full lg:pr-2 admin-scroll admin-main">
-                <section id="overview" class="relative overflow-hidden rounded-[22px] border border-white/15 bg-gradient-to-r from-indigo-600 to-purple-700 px-8 py-10 shadow-2xl ring-1 ring-white/15">
+                <section id="overview" class="relative overflow-hidden rounded-[22px] admin-hero px-8 py-10 shadow-2xl ring-1 ring-white/15">
                     <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.2),_transparent_45%)] blur-[2px]"></div>
                     <div class="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                         <div>

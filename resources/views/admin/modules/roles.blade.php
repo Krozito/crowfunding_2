@@ -7,9 +7,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen">
-    <div class="relative isolate overflow-hidden">
-        <div class="absolute -left-24 top-0 h-72 w-72 rounded-full bg-indigo-600/25 blur-3xl"></div>
-        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-fuchsia-500/20 blur-3xl"></div>
+    <div class="relative isolate overflow-hidden bg-zinc-950">
+        <div class="absolute -left-24 top-0 h-72 w-72 rounded-full bg-indigo-600/30 blur-2xl"></div>
+        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-fuchsia-500/25 blur-2xl"></div>
     </div>
 
     <header class="sticky top-0 z-30 border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl">
@@ -33,8 +33,11 @@
                 @include('admin.partials.modules', ['active' => 'roles'])
             </aside>
 
+            @php
+                $btnSolid = 'inline-flex items-center gap-2 rounded-xl bg-[#4f46e5] px-4 py-2.5 text-sm font-semibold text-white border border-[#4f46e5] hover:bg-[#4338ca]';
+            @endphp
             <div class="space-y-8 lg:overflow-y-auto lg:h-full lg:pr-2 admin-scroll admin-main">
-                <section class="rounded-3xl border border-white/10 bg-zinc-900/75 shadow-2xl ring-1 ring-indigo-500/10">
+                <section class="rounded-3xl border border-white/10 bg-zinc-900/75 shadow-2xl ring-1 ring-indigo-500/10 admin-accent-card">
             <div class="border-b border-white/5 px-6 py-6 space-y-4">
                 <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                     <div class="space-y-1">
@@ -43,10 +46,7 @@
                         <p class="text-sm text-zinc-400">Un usuario solo puede tener un rol activo. Usa filtros y asigna con rapidez.</p>
                     </div>
                     <div class="flex flex-wrap gap-2 text-xs text-zinc-300">
-                        <span class="rounded-xl border border-white/10 bg-white/5 px-4 py-2">Usuarios: {{ $users->total() }}</span>
-                        @php $verificados = $users->filter(fn($u) => $u->estado_verificacion)->count(); @endphp
-                        <span class="rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-2 text-emerald-100">Verificados (pagina): {{ $verificados }}</span>
-                        <a href="{{ route('admin.verificaciones') }}" class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-white hover:border-indigo-400/60">
+                        <a href="{{ route('admin.verificaciones') }}" class="{{ $btnSolid }}">
                             Solicitudes de verificacion
                         </a>
                     </div>
@@ -74,10 +74,10 @@
                         </select>
                     </div>
                     <div class="flex gap-2">
-                        <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500">
+                        <button type="submit" class="{{ $btnSolid }}">
                             Filtrar
                         </button>
-                        <a href="{{ route('admin.roles') }}" class="inline-flex items-center gap-2 rounded-xl border border-white/10 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/5">
+                        <a href="{{ route('admin.roles') }}" class="admin-btn admin-btn-ghost">
                             Limpiar
                         </a>
                     </div>
@@ -125,7 +125,7 @@
                                     @endforeach
                                 </select>
                                 <button type="submit"
-                                        class="mt-4 w-full rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500">
+                                        class="mt-4 w-full {{ $btnSolid }} justify-center">
                                     Guardar rol
                                 </button>
                             </form>
