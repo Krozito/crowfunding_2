@@ -7,9 +7,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen">
-    <div class="relative isolate overflow-hidden">
-        <div class="absolute -left-24 top-0 h-72 w-72 rounded-full bg-indigo-600/25 blur-3xl"></div>
-        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl"></div>
+    <div class="relative isolate overflow-hidden bg-zinc-950">
+        <div class="absolute -left-24 top-0 h-72 w-72 rounded-full bg-indigo-600/30 blur-2xl"></div>
+        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-fuchsia-500/25 blur-2xl"></div>
     </div>
 
     <header class="sticky top-0 z-30 border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl">
@@ -27,6 +27,9 @@
         </div>
     </header>
 
+    @php
+        $btnSolid = 'inline-flex items-center justify-center gap-2 rounded-xl bg-[#4f46e5] px-4 py-2.5 text-sm font-semibold text-white border border-[#4f46e5] hover:bg-[#4338ca]';
+    @endphp
     <main class="mx-auto w-full max-w-full px-0 pt-0 pb-6">
         <div class="grid gap-0 lg:grid-cols-[280px_1fr] lg:min-h-[calc(100vh-64px)] lg:overflow-hidden admin-shell">
             <aside class="lg:sticky lg:top-0 admin-sidebar">
@@ -49,7 +52,7 @@
                     </div>
                 @endif
 
-                <section class="rounded-3xl border border-white/10 bg-zinc-900/75 p-8 shadow-2xl ring-1 ring-indigo-500/10 space-y-4">
+                <section class="rounded-3xl border border-white/10 bg-zinc-900/75 p-8 shadow-2xl ring-1 ring-indigo-500/10 space-y-4 admin-accent-card">
             <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">KYC</p>
@@ -66,7 +69,7 @@
                             <option value="rechazada" @selected($estado === 'rechazada')>Rechazada</option>
                         </select>
                     </div>
-                    <button type="submit" class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:border-indigo-400/60">
+                    <button type="submit" class="{{ $btnSolid }}">
                         Filtrar
                     </button>
                 </form>
@@ -86,13 +89,13 @@
                                 <div class="mt-2 flex flex-wrap gap-2 text-xs text-white">
                                     @php $adj = $solicitud->adjuntos ?? []; @endphp
                                     @if (!empty($adj['documento_frontal']))
-                                        <a target="_blank" href="{{ route('admin.verificaciones.adjunto', [$solicitud, 'documento_frontal']) }}" class="rounded-lg border border-white/10 bg-white/5 px-3 py-1 hover:border-indigo-400/60">Frontal</a>
+                                        <a target="_blank" href="{{ route('admin.verificaciones.adjunto', [$solicitud, 'documento_frontal']) }}" class="admin-btn admin-btn-ghost text-xs">Frontal</a>
                                     @endif
                                     @if (!empty($adj['documento_reverso']))
-                                        <a target="_blank" href="{{ route('admin.verificaciones.adjunto', [$solicitud, 'documento_reverso']) }}" class="rounded-lg border border-white/10 bg-white/5 px-3 py-1 hover:border-indigo-400/60">Reverso</a>
+                                        <a target="_blank" href="{{ route('admin.verificaciones.adjunto', [$solicitud, 'documento_reverso']) }}" class="admin-btn admin-btn-ghost text-xs">Reverso</a>
                                     @endif
                                     @if (!empty($adj['selfie']))
-                                        <a target="_blank" href="{{ route('admin.verificaciones.adjunto', [$solicitud, 'selfie']) }}" class="rounded-lg border border-white/10 bg-white/5 px-3 py-1 hover:border-indigo-400/60">Selfie</a>
+                                        <a target="_blank" href="{{ route('admin.verificaciones.adjunto', [$solicitud, 'selfie']) }}" class="admin-btn admin-btn-ghost text-xs">Selfie</a>
                                     @endif
                                     @if (empty($adj))
                                         <span class="text-zinc-400">Archivos no disponibles</span>
@@ -109,12 +112,8 @@
                                         <textarea name="nota" rows="2" class="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400">{{ old('nota') }}</textarea>
                                     </div>
                                     <div class="grid grid-cols-2 gap-2">
-                                        <button name="accion" value="aprobar" class="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/20 px-3 py-2 text-sm font-semibold text-emerald-50 hover:border-emerald-400/60">
-                                            Aprobar
-                                        </button>
-                                        <button name="accion" value="rechazar" class="inline-flex items-center justify-center gap-2 rounded-xl border border-red-500/30 bg-red-500/15 px-3 py-2 text-sm font-semibold text-red-100 hover:border-red-400/60">
-                                            Rechazar
-                                        </button>
+                                        <button name="accion" value="aprobar" class="{{ $btnSolid }} text-sm">Aprobar</button>
+                                        <button name="accion" value="rechazar" class="{{ $btnSolid }} text-sm">Rechazar</button>
                                     </div>
                                 </form>
                             @else

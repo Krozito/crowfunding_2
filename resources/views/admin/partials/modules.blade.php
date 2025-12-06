@@ -1,3 +1,16 @@
+@php
+    $accentKey = $active ?? 'dashboard';
+    $accentPalette = [
+        'dashboard' => ['from' => '#6366f1', 'to' => '#8b5cf6', 'soft' => 'rgba(99,102,241,0.12)', 'ring' => 'rgba(99,102,241,0.55)'],
+        'roles' => ['from' => '#06b6d4', 'to' => '#6366f1', 'soft' => 'rgba(6,182,212,0.12)', 'ring' => 'rgba(6,182,212,0.55)'],
+        'proyectos' => ['from' => '#7c3aed', 'to' => '#a855f7', 'soft' => 'rgba(124,58,237,0.12)', 'ring' => 'rgba(168,85,247,0.55)'],
+        'auditorias' => ['from' => '#a855f7', 'to' => '#6366f1', 'soft' => 'rgba(168,85,247,0.12)', 'ring' => 'rgba(99,102,241,0.55)'],
+        'finanzas' => ['from' => '#22c55e', 'to' => '#0ea5e9', 'soft' => 'rgba(34,197,94,0.12)', 'ring' => 'rgba(14,165,233,0.55)'],
+        'proveedores' => ['from' => '#f59e0b', 'to' => '#f97316', 'soft' => 'rgba(245,158,11,0.14)', 'ring' => 'rgba(249,115,22,0.55)'],
+        'verificaciones' => ['from' => '#f43f5e', 'to' => '#a855f7', 'soft' => 'rgba(244,63,94,0.12)', 'ring' => 'rgba(168,85,247,0.5)'],
+    ];
+    $accent = $accentPalette[$accentKey] ?? $accentPalette['dashboard'];
+@endphp
 <style>
     .admin-scroll {
         scrollbar-color: #0f1017 #0a0b10;
@@ -16,8 +29,32 @@
     .admin-scroll::-webkit-scrollbar-thumb:hover {
         background: #2f3244;
     }
-    .admin-shell {
+    .admin-main::-webkit-scrollbar,
+    .admin-sidebar::-webkit-scrollbar {
+        width: 10px;
+    }
+    .admin-main::-webkit-scrollbar-track,
+    .admin-sidebar::-webkit-scrollbar-track {
         background: #0b0c12;
+    }
+    .admin-main::-webkit-scrollbar-thumb,
+    .admin-sidebar::-webkit-scrollbar-thumb {
+        background: #202230;
+        border-radius: 10px;
+        border: 2px solid #0b0c12;
+    }
+    .admin-main::-webkit-scrollbar-thumb:hover,
+    .admin-sidebar::-webkit-scrollbar-thumb:hover {
+        background: #2f3244;
+    }
+    .admin-shell {
+        --admin-accent-from: {{ $accent['from'] }};
+        --admin-accent-to: {{ $accent['to'] }};
+        --admin-accent-soft: {{ $accent['soft'] }};
+        --admin-accent-ring: {{ $accent['ring'] }};
+        background: #0b0c12;
+        min-height: calc(100vh - 64px);
+        overflow: hidden;
     }
     .admin-shell .admin-sidebar {
         width: 100%;
@@ -26,6 +63,10 @@
         border-right: 1px solid rgba(255,255,255,0.06);
         box-shadow: 8px 0 24px rgba(0,0,0,0.35);
         transition: transform 200ms ease, opacity 200ms ease;
+        position: sticky;
+        top: 64px;
+        height: calc(100vh - 64px);
+        overflow-y: auto;
     }
     .admin-shell.collapsed .admin-sidebar {
         transform: translateX(-110%);
@@ -79,10 +120,76 @@
         color: #fff;
     }
     .admin-link.active {
-        background: rgba(129,140,248,0.12);
+        background: var(--admin-accent-soft);
         color: #fff;
-        border: 1px solid rgba(129,140,248,0.5);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+        border: 1px solid var(--admin-accent-ring);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(255,255,255,0.02);
+    }
+    .admin-hero {
+        background: linear-gradient(120deg, var(--admin-accent-from), var(--admin-accent-to));
+        border: 1px solid rgba(255,255,255,0.12);
+        box-shadow: 0 24px 70px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.05);
+    }
+    .admin-accent-card {
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 -3px 0 0 var(--admin-accent-to) inset, 0 24px 70px rgba(0,0,0,0.45);
+        background: rgba(255,255,255,0.02);
+    }
+    .admin-accent-card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at 10% 10%, color-mix(in srgb, var(--admin-accent-from) 35%, transparent) 0%, transparent 35%),
+                    radial-gradient(circle at 80% 20%, color-mix(in srgb, var(--admin-accent-to) 38%, transparent) 0%, transparent 38%);
+        opacity: 0.35;
+    }
+    .admin-accent-card > * {
+        position: relative;
+        z-index: 1;
+    }
+    .admin-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        padding: 0.65rem 1rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        transition: transform 120ms ease, box-shadow 150ms ease, filter 150ms ease;
+    }
+    .admin-btn:active {
+        transform: translateY(1px);
+    }
+    .admin-btn-primary {
+        background: linear-gradient(135deg, var(--admin-accent-from), var(--admin-accent-to));
+        color: #fff;
+        border: 1px solid var(--admin-accent-ring);
+        box-shadow: 0 12px 35px color-mix(in srgb, var(--admin-accent-to) 45%, transparent), 0 0 0 1px rgba(255,255,255,0.05);
+    }
+    .admin-btn-primary:hover {
+        filter: brightness(1.05);
+    }
+    .admin-btn-ghost {
+        color: #e4e4ed;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255,255,255,0.03);
+    }
+    .admin-btn-ghost:hover {
+        border-color: var(--admin-accent-ring);
+        color: #fff;
+    }
+    .admin-main {
+        height: calc(100vh - 64px);
+        overflow-y: auto;
+        padding-right: 0.5rem;
+    }
+    @media (min-width: 1024px) {
+        .admin-main {
+            padding-right: 0.75rem;
+        }
     }
 </style>
 @once
@@ -124,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </button>
     </div>
     @php
-        $active = $active ?? '';
+        $active = $accentKey;
         $linkClass = 'admin-link';
         $activeClass = 'active';
     @endphp

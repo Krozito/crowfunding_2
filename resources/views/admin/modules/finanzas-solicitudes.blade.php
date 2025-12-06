@@ -7,9 +7,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen">
-    <div class="relative isolate overflow-hidden">
-        <div class="absolute -left-24 top-0 h-72 w-72 rounded-full bg-indigo-600/25 blur-3xl"></div>
-        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-fuchsia-500/20 blur-3xl"></div>
+    <div class="relative isolate overflow-hidden bg-zinc-950">
+        <div class="absolute -left-24 top-0 h-72 w-72 rounded-full bg-indigo-600/30 blur-2xl"></div>
+        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-fuchsia-500/25 blur-2xl"></div>
     </div>
 
     <header class="sticky top-0 z-30 border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl">
@@ -21,7 +21,7 @@
                 <h1 class="text-lg font-semibold text-white">Solicitudes globales</h1>
             </div>
             <div class="flex items-center gap-2 text-xs">
-                <a href="{{ route('admin.finanzas.proyectos') }}" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-white hover:border-indigo-400/60">Fondos por proyecto</a>
+                <span class="rounded-full bg-white/5 px-3 py-1 text-[11px] font-semibold text-zinc-300">Flujos</span>
             </div>
         </div>
     </header>
@@ -55,10 +55,11 @@
                             <h2 class="text-2xl font-bold text-white">Perspectiva global</h2>
                             <p class="text-sm text-zinc-400">Admin observa estado, montos y puede tomar acciones manuales de respaldo.</p>
                         </div>
+                        @php
+                            $btnSolid = 'inline-flex items-center gap-2 rounded-xl bg-[#4f46e5] px-4 py-2.5 text-sm font-semibold text-white border border-[#4f46e5] hover:bg-[#4338ca]';
+                        @endphp
                         <div class="flex flex-wrap gap-2 text-xs text-zinc-300">
-                            <span class="rounded-xl border border-white/10 bg-white/5 px-4 py-2">Total listado: {{ $solicitudes->total() }}</span>
-                            <span class="rounded-xl border border-white/10 bg-white/5 px-4 py-2">Solicitado: USD {{ number_format($totales['solicitado'], 2) }}</span>
-                            <span class="rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-2 text-emerald-100">Aprobado/liberado: USD {{ number_format($totales['aprobado'], 2) }}</span>
+                            <a href="{{ route('admin.finanzas.proyectos') }}" class="{{ $btnSolid }}">Fondos por proyecto</a>
                         </div>
                     </div>
 
@@ -82,10 +83,10 @@
                             </select>
                         </div>
                         <div class="flex gap-2">
-                            <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500">
+                            <button type="submit" class="{{ $btnSolid }}">
                                 Filtrar
                             </button>
-                            <a href="{{ route('admin.finanzas.solicitudes') }}" class="inline-flex items-center gap-2 rounded-xl border border-white/10 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/5">
+                            <a href="{{ route('admin.finanzas.solicitudes') }}" class="admin-btn admin-btn-ghost">
                                 Limpiar
                             </a>
                         </div>
@@ -140,9 +141,9 @@
                                         @csrf
                                         @method('PATCH')
                                         <input type="hidden" name="justificacion_admin" value="">
-                                        <button name="accion" value="liberar" class="inline-flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/20 px-3 py-2 text-xs font-semibold text-emerald-50 hover:border-emerald-400/60">Liberar manual</button>
-                                        <button name="accion" value="pausar" class="inline-flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/15 px-3 py-2 text-xs font-semibold text-red-100 hover:border-red-400/60">Pausar</button>
-                                        <button name="accion" value="reintentar" class="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold text-white hover:border-indigo-400/60">Reintentar</button>
+                                        <button name="accion" value="liberar" class="{{ $btnSolid }} text-xs">Liberar manual</button>
+                                        <button name="accion" value="pausar" class="admin-btn admin-btn-ghost text-xs">Pausar</button>
+                                        <button name="accion" value="reintentar" class="admin-btn admin-btn-ghost text-xs">Reintentar</button>
                                     </form>
                                 </div>
                             </article>

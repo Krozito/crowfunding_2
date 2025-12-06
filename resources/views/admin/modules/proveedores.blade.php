@@ -7,9 +7,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen">
-    <div class="relative isolate overflow-hidden">
-        <div class="absolute -left-20 top-0 h-64 w-64 rounded-full bg-indigo-600/30 blur-3xl"></div>
-        <div class="absolute right-0 top-24 h-64 w-64 rounded-full bg-fuchsia-500/20 blur-3xl"></div>
+    <div class="relative isolate overflow-hidden bg-zinc-950">
+        <div class="absolute -left-24 top-0 h-72 w-72 rounded-full bg-indigo-600/30 blur-2xl"></div>
+        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-fuchsia-500/25 blur-2xl"></div>
     </div>
 
     <header class="sticky top-0 z-30 border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl">
@@ -34,18 +34,14 @@
             </aside>
 
             <div class="space-y-8 lg:overflow-y-auto lg:h-full lg:pr-2 admin-scroll admin-main">
-        <section class="rounded-3xl border border-white/10 bg-zinc-900/75 p-8 shadow-2xl ring-1 ring-indigo-500/10 space-y-4">
+        <section class="rounded-3xl border border-white/10 bg-zinc-900/75 p-8 shadow-2xl ring-1 ring-indigo-500/10 space-y-4 admin-accent-card">
             <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Network</p>
                     <h2 class="text-2xl font-bold text-white">Directorio y performance</h2>
                     <p class="text-sm text-zinc-400">Audita proveedores, rating y vinculacion a proyectos.</p>
                 </div>
-                <div class="flex flex-wrap gap-2 text-xs text-zinc-300">
-                    <span class="rounded-xl border border-white/10 bg-white/5 px-4 py-2">Total: {{ $stats['total'] }}</span>
-                    <span class="rounded-xl border border-white/10 bg-white/5 px-4 py-2">Vinculados a proyectos: {{ $stats['conProyecto'] }}</span>
-                    <span class="rounded-xl border border-white/10 bg-white/5 px-4 py-2">Calificacion prom.: {{ number_format($stats['calificacionPromedio'], 2) }}</span>
-                </div>
+                <div class="flex flex-wrap gap-2 text-xs text-zinc-300"></div>
             </div>
 
             <form method="GET" action="{{ route('admin.proveedores') }}" class="grid gap-3 sm:grid-cols-[1.5fr,1fr,1fr,auto] sm:items-end">
@@ -62,18 +58,12 @@
                         @endforeach
                     </select>
                 </div>
-                <div>
-                    <label class="text-xs text-zinc-400">Creador</label>
-                    <select name="creador" class="mt-1 w-full appearance-none rounded-xl border border-white/15 bg-zinc-900/80 px-4 py-2.5 text-sm text-white focus:border-white/40 focus:ring-white/20">
-                        <option value="">Todos</option>
-                        @foreach ($creadores as $creador)
-                            <option value="{{ $creador->id }}" @selected($creadorFiltro == $creador->id)>{{ $creador->nombre_completo ?? $creador->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
                 <div class="flex gap-2">
-                    <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500">Filtrar</button>
-                    <a href="{{ route('admin.proveedores') }}" class="inline-flex items-center gap-2 rounded-xl border border-white/10 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/5">Limpiar</a>
+                    @php
+                        $btnSolid = 'inline-flex items-center gap-2 rounded-xl bg-[#4f46e5] px-4 py-2.5 text-sm font-semibold text-white border border-[#4f46e5] hover:bg-[#4338ca]';
+                    @endphp
+                    <button type="submit" class="{{ $btnSolid }}">Filtrar</button>
+                    <a href="{{ route('admin.proveedores') }}" class="admin-btn admin-btn-ghost">Limpiar</a>
                 </div>
             </form>
         </section>

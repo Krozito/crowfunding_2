@@ -7,9 +7,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen">
-    <div class="relative isolate overflow-hidden">
-        <div class="absolute -left-24 top-0 h-72 w-72 rounded-full bg-indigo-600/25 blur-3xl"></div>
-        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl"></div>
+    <div class="relative isolate overflow-hidden bg-zinc-950">
+        <div class="absolute -left-24 top-0 h-72 w-72 rounded-full bg-indigo-600/30 blur-2xl"></div>
+        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-fuchsia-500/25 blur-2xl"></div>
     </div>
 
     <header class="sticky top-0 z-30 border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl">
@@ -25,12 +25,15 @@
 
     <main class="mx-auto w-full max-w-full px-0 pt-0 pb-6">
         <div class="grid gap-0 lg:grid-cols-[280px_1fr] lg:min-h-[calc(100vh-64px)] lg:overflow-hidden admin-shell">
+            @php
+                $btnSolid = 'inline-flex items-center gap-2 rounded-xl bg-[#4f46e5] px-4 py-2.5 text-sm font-semibold text-white border border-[#4f46e5] hover:bg-[#4338ca]';
+            @endphp
             <aside class="lg:sticky lg:top-0 admin-sidebar">
                 @include('admin.partials.modules', ['active' => 'finanzas'])
             </aside>
 
             <div class="space-y-8 lg:overflow-y-auto lg:h-full lg:pr-2 admin-scroll admin-main">
-                <section class="rounded-3xl border border-white/10 bg-zinc-900/75 p-8 shadow-2xl ring-1 ring-indigo-500/10 space-y-4">
+                <section class="rounded-3xl border border-white/10 bg-zinc-900/75 p-8 shadow-2xl ring-1 ring-indigo-500/10 space-y-4 admin-accent-card">
                     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                         <div>
                             <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Estado general</p>
@@ -38,8 +41,8 @@
                             <p class="text-sm text-zinc-400">Supervisa recaudado, escrow, liberado, gastado y pendiente.</p>
                         </div>
                         <div class="flex flex-wrap gap-2 text-xs">
-                            <a href="{{ route('admin.finanzas.proyectos') }}" class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-white hover:border-indigo-400/60">Fondos por proyecto</a>
-                            <a href="{{ route('admin.finanzas.solicitudes') }}" class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-white hover:border-indigo-400/60">Solicitudes</a>
+                            <a href="{{ route('admin.finanzas.proyectos') }}" class="{{ $btnSolid }}">Fondos por proyecto</a>
+                            <a href="{{ route('admin.finanzas.solicitudes') }}" class="{{ $btnSolid }}">Solicitudes</a>
                         </div>
                     </div>
 
@@ -73,10 +76,10 @@
                     <div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-zinc-300">
                         <p class="text-sm font-semibold text-white">Reportes globales</p>
                         <div class="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-4 text-xs">
-                            <a href="{{ route('admin.finanzas.export.retenidos') }}" class="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-left font-semibold text-white hover:border-indigo-400/60">Descargar fondos retenidos (Excel)</a>
-                            <a href="{{ route('admin.finanzas.export.liberados') }}" class="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-left font-semibold text-white hover:border-indigo-400/60">Descargar fondos liberados (Excel)</a>
-                            <a href="{{ route('admin.finanzas.export.recaudacion.mensual') }}" class="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-left font-semibold text-white hover:border-indigo-400/60">Recaudacion por mes/año (Excel)</a>
-                            <a href="{{ route('admin.finanzas.export.recaudacion.categoria') }}" class="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-left font-semibold text-white hover:border-indigo-400/60">Reporte por categoria (Excel)</a>
+                            <a href="{{ route('admin.finanzas.export.retenidos') }}" class="{{ $btnSolid }} justify-start text-left">Descargar fondos retenidos (Excel)</a>
+                            <a href="{{ route('admin.finanzas.export.liberados') }}" class="{{ $btnSolid }} justify-start text-left">Descargar fondos liberados (Excel)</a>
+                            <a href="{{ route('admin.finanzas.export.recaudacion.mensual') }}" class="{{ $btnSolid }} justify-start text-left">Recaudacion por mes/año (Excel)</a>
+                            <a href="{{ route('admin.finanzas.export.recaudacion.categoria') }}" class="{{ $btnSolid }} justify-start text-left">Reporte por categoria (Excel)</a>
                         </div>
                         <p class="mt-2 text-[11px] text-zinc-500">Los reportes se generan como hojas Excel.</p>
                     </div>

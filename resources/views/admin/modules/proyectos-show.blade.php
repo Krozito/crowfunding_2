@@ -7,9 +7,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen">
-    <div class="relative isolate overflow-hidden">
-        <div class="absolute -left-32 top-0 h-72 w-72 rounded-full bg-indigo-600/25 blur-3xl"></div>
-        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-fuchsia-500/15 blur-3xl"></div>
+    <div class="relative isolate overflow-hidden bg-zinc-950">
+        <div class="absolute -left-24 top-0 h-72 w-72 rounded-full bg-indigo-600/30 blur-2xl"></div>
+        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-fuchsia-500/25 blur-2xl"></div>
     </div>
 
     <header class="sticky top-0 z-30 border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl">
@@ -112,7 +112,7 @@
                                 <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Top inversionistas</p>
                                 <h3 class="text-lg font-semibold text-white">Mayores aportantes</h3>
                             </div>
-                            <a href="{{ route('admin.proyectos.gastos', $proyecto) }}" class="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-white hover:border-indigo-400/60">
+                            <a href="{{ route('admin.proyectos.gastos', $proyecto) }}" class="inline-flex items-center gap-2 rounded-xl bg-[#4f46e5] px-4 py-2 text-xs font-semibold text-white border border-[#4f46e5] hover:bg-[#4338ca]">
                                 Ver gastos y comprobantes
                             </a>
                         </div>
