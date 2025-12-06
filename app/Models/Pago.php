@@ -17,6 +17,8 @@ class Pago extends Model
         'monto',
         'fecha_pago',
         'concepto',
+        'estado_auditoria',
+        'nota_auditoria',
         'adjuntos',
     ];
 

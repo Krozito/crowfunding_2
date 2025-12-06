@@ -21,12 +21,28 @@
     </div>
 
     <div class="px-4 sm:px-6 lg:px-8 space-y-8">
-        <div class="flex flex-wrap gap-3">
-            <button class="admin-btn admin-btn-primary text-xs">Pendientes</button>
-            <button class="admin-btn admin-btn-ghost text-xs">Observados</button>
-            <button class="admin-btn admin-btn-ghost text-xs">Rechazados</button>
-            <button class="admin-btn admin-btn-ghost text-xs">Aprobados</button>
-        </div>
+        <form method="GET" class="grid gap-3 md:grid-cols-[1fr_220px_auto] items-end">
+            <div>
+                <label class="block text-xs uppercase tracking-[0.3em] text-zinc-500">Buscar</label>
+                <input type="text" name="q" value="{{ $q ?? '' }}" placeholder="Proveedor, proyecto o concepto"
+                       class="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:outline-none">
+            </div>
+            <div>
+                <label class="block text-xs uppercase tracking-[0.3em] text-zinc-500">Estado</label>
+                <select name="estado" class="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:outline-none">
+                    <option value="">Todos</option>
+                    @foreach ($estados as $opt)
+                        <option value="{{ $opt }}" {{ ($estado ?? '') === $opt ? 'selected' : '' }}>
+                            {{ ucfirst($opt) }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="admin-btn admin-btn-primary text-xs">Filtrar</button>
+                <a href="{{ route('auditor.comprobantes') }}" class="admin-btn admin-btn-ghost text-xs">Limpiar</a>
+            </div>
+        </form>
 
         <div class="rounded-2xl border border-white/10 bg-zinc-900/70 p-6 shadow-xl admin-accent-card">
             <div class="grid grid-cols-1 md:grid-cols-7 gap-4 text-xs uppercase tracking-[0.2em] text-zinc-400 font-semibold">
@@ -35,7 +51,7 @@
                 <span>Monto</span>
                 <span>Proveedor</span>
                 <span>Fecha</span>
-                <span>Hito/Categoria</span>
+                <span>Hito/Estado</span>
                 <span>Acciones</span>
             </div>
             <div class="mt-3 space-y-3 text-sm text-zinc-300">
@@ -54,13 +70,10 @@
                         <p class="text-xs text-zinc-400">{{ $pago->fecha_pago?->format('Y-m-d') ?? 'N/D' }}</p>
                         <div>
                             <p class="text-sm text-white">{{ $pago->solicitud->hito ?? 'Hito' }}</p>
-                            <p class="text-xs text-zinc-400">{{ $pago->solicitud->estado ?? 'Estado' }}</p>
+                            <p class="text-xs text-zinc-400">Solicitud: {{ $pago->solicitud->estado ?? 'Estado' }}</p>
+                            <p class="text-[11px] uppercase tracking-[0.2em] {{ ($pago->estado_auditoria ?? 'pendiente') === 'rechazado' ? 'text-red-300' : 'text-indigo-200' }}">Auditoria: {{ $pago->estado_auditoria ?? 'pendiente' }}</p>
                         </div>
-                        <div class="flex flex-wrap gap-2">
-                            <button class="admin-btn admin-btn-primary text-xs">Aprobar</button>
-                            <button class="admin-btn admin-btn-ghost text-xs">Observar</button>
-                            <button class="admin-btn admin-btn-ghost text-xs border-red-400/60 text-red-200">Rechazar</button>
-                        </div>
+                        <a href="{{ route('auditor.comprobantes.show', $pago) }}" class="admin-btn admin-btn-primary text-xs">Ver detalle</a>
                     </div>
                 @empty
                     <p class="text-xs text-zinc-500">No hay comprobantes registrados.</p>
