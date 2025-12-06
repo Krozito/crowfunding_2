@@ -1,107 +1,130 @@
-{{-- resources/views/colaborador/layouts/panel.blade.php --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
     <title>@yield('title', 'Panel Colaborador') | CrowdUp</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen">
-    <div class="relative isolate overflow-hidden bg-zinc-950">
-        {{-- Fondo decorativo, igual que en el panel de creador --}}
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.25),transparent_60%)]"></div>
+    @php
+        // Rutas con las que vamos a comparar
+        $navItems = [
+            [
+                'route' => 'colaborador.dashboard',
+                'label' => 'Inicio',
+                'href'  => route('colaborador.dashboard'),
+            ],
+            [
+                'route' => 'colaborador.proyectos',
+                'label' => 'Proyectos que apoyas',
+                'href'  => route('colaborador.proyectos'),
+            ],
+            [
+                'route' => 'colaborador.aportaciones',
+                'label' => 'Aportaciones',
+                'href'  => route('colaborador.aportaciones'),
+            ],
+            [
+                'route' => 'colaborador.reportes',
+                'label' => 'Reportes',
+                'href'  => route('colaborador.reportes'),
+            ],
+        ];
+    @endphp
 
-        @php
-            $backUrl   = trim($__env->yieldContent('back_url', route('colaborador.dashboard')));
-            $backLabel = trim($__env->yieldContent('back_label', 'Volver al panel'));
-        @endphp
-
-        {{-- Header --}}
-        <header class="sticky top-0 z-30 border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl">
-            <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center gap-4">
-                    <a href="{{ url('/') }}" class="flex items-center gap-3">
-                        <img src="/images/brand/mark.png" alt="CrowdUp" class="h-8 w-8">
-                        <span class="text-xl font-extrabold tracking-tight">
-                            Crowd<span class="text-indigo-400">Up</span> Colaborador
-                        </span>
-                    </a>
-
-                    @if ($backUrl)
-                        <a href="{{ $backUrl }}" class="inline-flex items-center gap-2 text-sm text-zinc-300 hover:text-white">
-                            <span aria-hidden="true">&larr;</span> {{ $backLabel }}
-                        </a>
-                    @endif
-                </div>
-
-                <div class="flex items-center gap-4">
-                    <span class="hidden text-sm text-zinc-400 sm:inline">
-                        {{ auth()->user()->name ?? 'Invitado' }} · COLABORADOR
-                    </span>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button
-                            type="submit"
-                            class="rounded-full bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-100 hover:bg-zinc-700">
-                            Salir
-                        </button>
-                    </form>
+    <div class="min-h-screen flex bg-zinc-950">
+        {{-- SIDEBAR --}}
+        <aside class="w-72 border-r border-zinc-900 bg-black/40 backdrop-blur">
+            <div class="px-6 py-5 border-b border-zinc-900 flex items-center gap-2">
+                <img src="/images/brand/mark.png" alt="CrowdUp" class="h-7 w-7" />
+                <div class="flex flex-col leading-tight">
+                    <span class="text-sm font-semibold">CrowdUp Colaborador</span>
                 </div>
             </div>
-        </header>
 
-        <main class="mx-auto flex max-w-7xl gap-8 px-4 py-8 sm:px-6 lg:px-8">
-            {{-- Sidebar --}}
-            <aside class="w-64 shrink-0">
-                <nav class="space-y-4">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
-                            Navegación
-                        </p>
-                        <ul class="mt-3 space-y-1 text-sm">
-                            <li>
-                                <a href="{{ route('colaborador.dashboard') }}"
-                                   class="flex items-center justify-between rounded-lg px-3 py-2
-                                          @if($__env->yieldContent('active') === 'dashboard')
-                                              bg-zinc-800 text-white
-                                          @else
-                                              text-zinc-300 hover:bg-zinc-800/60 hover:text-white
-                                          @endif">
-                                    <span>Inicio</span>
-                                    @if($__env->yieldContent('active') === 'dashboard')
-                                        <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
-                                    @endif
-                                </a>
-                            </li>
-                            {{-- aquí luego podemos añadir enlaces a proyectos/aportaciones/reportes --}}
-                        </ul>
+            <nav class="px-4 py-6 space-y-8 text-sm">
+                <div>
+                    <p class="text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-3">
+                        Navegación
+                    </p>
+
+                    <div class="space-y-1">
+                        @foreach($navItems as $item)
+                            @php
+                                $isActive = request()->routeIs($item['route']);
+                            @endphp
+
+                            <a href="{{ $item['href'] }}"
+                               class="group flex items-center justify-between px-3 py-2 rounded-xl
+                                      text-xs font-medium transition
+                                      {{ $isActive
+                                            ? 'bg-zinc-800/70 text-zinc-50'
+                                            : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100' }}">
+                                <span>{{ $item['label'] }}</span>
+
+                                {{-- Burbuja verde SOLO cuando está activa --}}
+                                <span class="h-2.5 w-2.5 rounded-full
+                                             {{ $isActive ? 'bg-emerald-400 shadow-[0_0_0_4px_rgba(16,185,129,0.25)]' : 'bg-zinc-700/0' }}">
+                                </span>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-3">
+                        Cuenta
+                    </p>
+
+                    <a href="{{ route('profile.edit') }}"
+                       class="flex items-center justify-between px-3 py-2 rounded-xl
+                              text-xs font-medium text-zinc-400
+                              hover:bg-zinc-900 hover:text-zinc-100 transition">
+                        <span>Mi perfil</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        {{-- CONTENIDO PRINCIPAL --}}
+        <div class="flex-1 flex flex-col">
+            {{-- CABECERA SUPERIOR --}}
+            <header class="border-b border-zinc-900 bg-black/40 backdrop-blur">
+                <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3 text-xs text-zinc-400">
+                        <a href="{{ route('dashboard') }}" class="hover:text-zinc-100 transition">
+                            ← Volver al panel
+                        </a>
+                        <span class="text-zinc-600">/</span>
+                        <span class="text-zinc-300">@yield('title', 'Panel de Colaborador')</span>
                     </div>
 
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
-                            Cuenta
-                        </p>
-                        <ul class="mt-3 space-y-1 text-sm">
-                            <li>
-                                <a href="{{ route('profile.edit') }}"
-                                   class="flex items-center justify-between rounded-lg px-3 py-2 text-zinc-300 hover:bg-zinc-800/60 hover:text-white">
-                                    <span>Mi perfil</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-            </aside>
+                    <div class="flex items-center gap-3 text-xs">
+                        <span class="text-zinc-400">
+                            {{ auth()->user()->name ?? 'Usuario' }}
+                            · <span class="uppercase tracking-[0.16em] text-[11px]">Colaborador</span>
+                        </span>
 
-            {{-- CONTENIDO ESPECÍFICO DE CADA VISTA --}}
-            <section class="flex-1 space-y-8">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                                    class="px-3 py-1.5 rounded-full text-xs font-medium
+                                           bg-zinc-100 text-zinc-900 hover:bg-white transition">
+                                Salir
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </header>
+
+            {{-- CONTENIDO DE CADA PÁGINA --}}
+            <main class="flex-1">
                 @yield('content')
-            </section>
-        </main>
+            </main>
+        </div>
     </div>
 
     @stack('scripts')
