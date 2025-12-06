@@ -7,7 +7,7 @@
 
 @section('content')
     <div class="px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
-        <div class="relative overflow-hidden rounded-[22px] bg-gradient-to-r from-indigo-700/30 via-sky-700/20 to-emerald-600/25 border border-white/10 px-6 py-6 shadow-2xl">
+        <div class="relative overflow-hidden rounded-[22px] bg-gradient-to-r from-purple-800/30 via-purple-700/25 to-fuchsia-600/25 border border-white/10 px-6 py-6 shadow-2xl">
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_transparent_45%)] blur-[1px]"></div>
             <div class="relative flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div>

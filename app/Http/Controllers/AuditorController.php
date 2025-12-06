@@ -266,7 +266,17 @@ class AuditorController extends Controller
 
     public function showProyecto(Proyecto $proyecto)
     {
-        return view('auditor.modules.proyectos-show', compact('proyecto'));
+        $portadaUrl = null;
+        if ($proyecto->imagen_portada) {
+            $normalized = ltrim(preg_replace('/^public\\//', '', $proyecto->imagen_portada), '/');
+            if (Storage::disk('public')->exists($normalized)) {
+                $portadaUrl = asset('storage/' . $normalized);
+            } elseif (file_exists(public_path($proyecto->imagen_portada))) {
+                $portadaUrl = asset($proyecto->imagen_portada);
+            }
+        }
+
+        return view('auditor.modules.proyectos-show', compact('proyecto', 'portadaUrl'));
     }
 
     public function updateProyectoPublicacion(Request $request, Proyecto $proyecto)

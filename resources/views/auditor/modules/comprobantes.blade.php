@@ -73,16 +73,7 @@
                             <p class="text-xs text-zinc-400">Solicitud: {{ $pago->solicitud->estado ?? 'Estado' }}</p>
                             <p class="text-[11px] uppercase tracking-[0.2em] {{ ($pago->estado_auditoria ?? 'pendiente') === 'rechazado' ? 'text-red-300' : 'text-indigo-200' }}">Auditoria: {{ $pago->estado_auditoria ?? 'pendiente' }}</p>
                         </div>
-                        <form action="{{ route('auditor.comprobantes.estado', $pago) }}" method="POST" class="flex flex-wrap gap-2 items-center">
-                            @csrf
-                            @method('PATCH')
-                            <input type="hidden" name="accion" value="observar">
-                            <input type="text" name="nota" placeholder="Nota (para rechazar/observar)" class="w-full md:w-40 rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-xs text-white placeholder:text-zinc-500 focus:border-indigo-400 focus:outline-none">
-                            <button type="submit" onclick="this.form.accion.value='aprobar'" class="admin-btn admin-btn-primary text-xs">Aprobar</button>
-                            <button type="submit" onclick="this.form.accion.value='observar'" class="admin-btn admin-btn-ghost text-xs">Observar</button>
-                            <button type="submit" onclick="this.form.accion.value='rechazar'" class="admin-btn admin-btn-ghost text-xs border-red-400/60 text-red-200">Rechazar</button>
-                            <a href="{{ route('auditor.comprobantes.show', $pago) }}" class="admin-btn admin-btn-ghost text-xs">Ver detalle</a>
-                        </form>
+                        <a href="{{ route('auditor.comprobantes.show', $pago) }}" class="admin-btn admin-btn-primary text-xs">Ver detalle</a>
                     </div>
                 @empty
                     <p class="text-xs text-zinc-500">No hay comprobantes registrados.</p>

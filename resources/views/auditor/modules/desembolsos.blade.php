@@ -52,10 +52,7 @@
                     <p class="text-sm text-zinc-400">Solicita ${{ number_format($item->monto_solicitado, 0, ',', '.') }} • {{ $item->created_at?->format('Y-m-d') }}</p>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <button class="admin-btn admin-btn-primary text-xs">Aprobar</button>
-                    <button class="admin-btn admin-btn-ghost text-xs">Rechazar</button>
-                    <button class="admin-btn admin-btn-ghost text-xs">Pedir documentos</button>
-                    <a href="{{ route('auditor.desembolsos.show', $item) }}" class="admin-btn admin-btn-ghost text-xs">Ver detalle</a>
+                    <a href="{{ route('auditor.desembolsos.show', $item) }}" class="admin-btn admin-btn-primary text-xs">Ver detalle</a>
                 </div>
             </div>
         @empty

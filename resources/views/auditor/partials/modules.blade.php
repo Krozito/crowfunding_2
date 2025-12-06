@@ -1,13 +1,13 @@
 @php
     $accentKey = $active ?? 'general';
     $accentPalette = [
-        'general' => ['from' => '#7c3aed', 'to' => '#6366f1', 'soft' => 'rgba(124,58,237,0.12)', 'ring' => 'rgba(124,58,237,0.55)'],
-        'comprobantes' => ['from' => '#0ea5e9', 'to' => '#22d3ee', 'soft' => 'rgba(14,165,233,0.12)', 'ring' => 'rgba(34,211,238,0.55)'],
-        'desembolsos' => ['from' => '#06b6d4', 'to' => '#22c55e', 'soft' => 'rgba(6,182,212,0.12)', 'ring' => 'rgba(34,197,94,0.55)'],
-        'sospechosos' => ['from' => '#f97316', 'to' => '#ef4444', 'soft' => 'rgba(249,115,22,0.12)', 'ring' => 'rgba(239,68,68,0.55)'],
-        'hitos' => ['from' => '#a855f7', 'to' => '#6366f1', 'soft' => 'rgba(168,85,247,0.12)', 'ring' => 'rgba(99,102,241,0.55)'],
-        'proyectos' => ['from' => '#10b981', 'to' => '#14b8a6', 'soft' => 'rgba(16,185,129,0.12)', 'ring' => 'rgba(16,185,129,0.55)'],
-        'dashboard' => ['from' => '#7c3aed', 'to' => '#6366f1', 'soft' => 'rgba(124,58,237,0.12)', 'ring' => 'rgba(124,58,237,0.55)'],
+        'general' => ['from' => '#7e22ce', 'to' => '#6d28d9', 'soft' => 'rgba(110,23,184,0.14)', 'ring' => 'rgba(110,23,184,0.55)'],
+        'comprobantes' => ['from' => '#8b5cf6', 'to' => '#a855f7', 'soft' => 'rgba(139,92,246,0.14)', 'ring' => 'rgba(139,92,246,0.55)'],
+        'desembolsos' => ['from' => '#7c3aed', 'to' => '#c084fc', 'soft' => 'rgba(124,58,237,0.14)', 'ring' => 'rgba(192,132,252,0.55)'],
+        'sospechosos' => ['from' => '#a855f7', 'to' => '#ec4899', 'soft' => 'rgba(168,85,247,0.14)', 'ring' => 'rgba(236,72,153,0.55)'],
+        'hitos' => ['from' => '#6b21a8', 'to' => '#8b5cf6', 'soft' => 'rgba(107,33,168,0.14)', 'ring' => 'rgba(139,92,246,0.55)'],
+        'proyectos' => ['from' => '#9333ea', 'to' => '#7c3aed', 'soft' => 'rgba(147,51,234,0.14)', 'ring' => 'rgba(147,51,234,0.55)'],
+        'dashboard' => ['from' => '#7e22ce', 'to' => '#6d28d9', 'soft' => 'rgba(110,23,184,0.14)', 'ring' => 'rgba(110,23,184,0.55)'],
     ];
     $accent = $accentPalette[$accentKey] ?? $accentPalette['general'];
 @endphp
@@ -164,18 +164,18 @@
         transform: translateY(1px);
     }
     .admin-btn-primary {
-        background: linear-gradient(135deg, var(--admin-accent-from), var(--admin-accent-to));
+        background: #3b1567;
         color: #fff;
-        border: 1px solid var(--admin-accent-ring);
-        box-shadow: 0 12px 35px color-mix(in srgb, var(--admin-accent-to) 45%, transparent), 0 0 0 1px rgba(255,255,255,0.05);
+        border: 1px solid rgba(124,58,237,0.45);
+        box-shadow: none;
     }
     .admin-btn-primary:hover {
-        filter: brightness(1.05);
+        filter: brightness(1.02);
     }
     .admin-btn-ghost {
         color: #e4e4ed;
-        border: 1px solid rgba(255,255,255,0.1);
-        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.02);
     }
     .admin-btn-ghost:hover {
         border-color: var(--admin-accent-ring);

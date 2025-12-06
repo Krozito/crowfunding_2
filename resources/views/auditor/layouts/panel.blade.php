@@ -9,8 +9,8 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen">
     <div class="relative isolate overflow-hidden bg-zinc-950">
-        <div class="absolute -left-24 top-0 h-72 w-72 rounded-full bg-indigo-600/30 blur-2xl"></div>
-        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-fuchsia-500/25 blur-2xl"></div>
+        <div class="absolute -left-24 top-0 h-72 w-72 rounded-full bg-purple-700/30 blur-2xl"></div>
+        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-fuchsia-600/25 blur-2xl"></div>
     </div>
 
     @php
@@ -22,7 +22,7 @@
             <div class="flex items-center gap-4">
                 <a href="{{ url('/') }}" class="flex items-center gap-3">
                     <img src="/images/brand/mark.png" alt="CrowdUp" class="h-8 w-8" />
-                    <span class="text-xl font-extrabold tracking-tight">Crowd<span class="text-indigo-400">Up</span> Audit</span>
+                    <span class="text-xl font-extrabold tracking-tight">Crowd<span class="text-purple-300">Up</span> Audit</span>
                 </a>
                 @if ($backUrl)
                     <a href="{{ $backUrl }}" class="inline-flex items-center gap-2 text-sm text-zinc-300 hover:text-white">
