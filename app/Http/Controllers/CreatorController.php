@@ -7,6 +7,8 @@ use App\Models\Aportacion;
 use App\Models\Proveedor;
 use App\Models\ProveedorHistorial;
 use App\Models\Proyecto;
+use App\Models\ProyectoCategoria;
+use App\Models\ProyectoModeloFinanciamiento;
 use App\Models\Recompensa;
 use App\Models\SolicitudDesembolso;
 use App\Models\Pago;
@@ -70,14 +72,19 @@ class CreatorController extends Controller
 
     public function proyectosCrear(): View
     {
-        return view('creator.modules.proyectos-create');
+        $categorias = ProyectoCategoria::orderBy('nombre')->get();
+        $modelos = ProyectoModeloFinanciamiento::orderBy('nombre')->get();
+
+        return view('creator.modules.proyectos-create', compact('categorias', 'modelos'));
     }
 
     public function proyectosEditar(Proyecto $proyecto): View
     {
         $this->authorizeProyecto($proyecto, auth()->id());
+        $categorias = ProyectoCategoria::orderBy('nombre')->get();
+        $modelos = ProyectoModeloFinanciamiento::orderBy('nombre')->get();
 
-        return view('creator.modules.proyectos-edit', compact('proyecto'));
+        return view('creator.modules.proyectos-edit', compact('proyecto', 'categorias', 'modelos'));
     }
 
     public function recompensas(Request $request): View
@@ -374,8 +381,8 @@ class CreatorController extends Controller
             'titulo' => ['required', 'string', 'max:255'],
             'descripcion_proyecto' => ['nullable', 'string'],
             'meta_financiacion' => ['required', 'numeric', 'min:0'],
-            'modelo_financiamiento' => ['nullable', 'string', 'max:32'],
-            'categoria' => ['nullable', 'string', 'max:64'],
+            'modelo_financiamiento_id' => ['nullable', 'exists:proyecto_modelos_financiamiento,id'],
+            'categoria_id' => ['nullable', 'exists:proyecto_categorias,id'],
             'ubicacion_geografica' => ['nullable', 'string', 'max:120'],
             'fecha_limite' => ['nullable', 'date'],
             'cronograma' => ['nullable', 'string'],
@@ -392,8 +399,8 @@ class CreatorController extends Controller
             'titulo' => $validated['titulo'],
             'descripcion_proyecto' => $validated['descripcion_proyecto'] ?? null,
             'meta_financiacion' => $validated['meta_financiacion'],
-            'modelo_financiamiento' => $validated['modelo_financiamiento'] ?? null,
-            'categoria' => $validated['categoria'] ?? null,
+            'modelo_financiamiento' => $this->resolveModeloNombre($request->input('modelo_financiamiento_id')),
+            'categoria' => $this->resolveCategoriaNombre($request->input('categoria_id')),
             'ubicacion_geografica' => $validated['ubicacion_geografica'] ?? null,
             'fecha_limite' => $validated['fecha_limite'] ?? null,
             'cronograma' => $this->decodeJson($validated['cronograma'] ?? null),
@@ -416,8 +423,8 @@ class CreatorController extends Controller
             'descripcion_proyecto' => ['nullable', 'string'],
             'meta_financiacion' => ['nullable', 'numeric', 'min:0'],
             'estado' => ['nullable', 'string', 'max:32'],
-            'modelo_financiamiento' => ['nullable', 'string', 'max:32'],
-            'categoria' => ['nullable', 'string', 'max:64'],
+            'modelo_financiamiento_id' => ['nullable', 'exists:proyecto_modelos_financiamiento,id'],
+            'categoria_id' => ['nullable', 'exists:proyecto_categorias,id'],
             'ubicacion_geografica' => ['nullable', 'string', 'max:120'],
             'fecha_limite' => ['nullable', 'date'],
             'cronograma' => ['nullable', 'string'],
@@ -426,6 +433,8 @@ class CreatorController extends Controller
         ]);
 
         $payload = $validated;
+        $payload['modelo_financiamiento'] = $this->resolveModeloNombre($request->input('modelo_financiamiento_id'));
+        $payload['categoria'] = $this->resolveCategoriaNombre($request->input('categoria_id'));
         if (array_key_exists('cronograma', $validated)) {
             $payload['cronograma'] = $this->decodeJson($validated['cronograma']);
         }
@@ -912,5 +921,23 @@ class CreatorController extends Controller
         }
 
         return $estado === 'pausado' ? '[PAUSADO] ' . $limpia : $limpia;
+    }
+
+    private function resolveCategoriaNombre($categoriaId): ?string
+    {
+        if (!$categoriaId) {
+            return null;
+        }
+
+        return ProyectoCategoria::find($categoriaId)?->nombre;
+    }
+
+    private function resolveModeloNombre($modeloId): ?string
+    {
+        if (!$modeloId) {
+            return null;
+        }
+
+        return ProyectoModeloFinanciamiento::find($modeloId)?->nombre;
     }
 }

@@ -35,10 +35,28 @@ Route::get('/admin/proyectos', [\App\Http\Controllers\AdminController::class, 'p
 
 Route::get('/admin/proyectos/{proyecto}', [\App\Http\Controllers\AdminController::class, 'showProyecto'])
     ->middleware(['auth','role:ADMIN'])
+    ->whereNumber('proyecto')
     ->name('admin.proyectos.show');
 Route::get('/admin/proyectos/{proyecto}/gastos', [\App\Http\Controllers\AdminController::class, 'proyectoGastos'])
     ->middleware(['auth','role:ADMIN'])
+    ->whereNumber('proyecto')
     ->name('admin.proyectos.gastos');
+
+Route::get('/admin/proyectos/config', [\App\Http\Controllers\AdminController::class, 'proyectosConfig'])
+    ->middleware(['auth','role:ADMIN'])
+    ->name('admin.proyectos.config');
+Route::post('/admin/proyectos/categorias', [\App\Http\Controllers\AdminController::class, 'storeCategoriaProyecto'])
+    ->middleware(['auth','role:ADMIN'])
+    ->name('admin.proyectos.categorias.store');
+Route::delete('/admin/proyectos/categorias/{categoria}', [\App\Http\Controllers\AdminController::class, 'deleteCategoriaProyecto'])
+    ->middleware(['auth','role:ADMIN'])
+    ->name('admin.proyectos.categorias.destroy');
+Route::post('/admin/proyectos/modelos', [\App\Http\Controllers\AdminController::class, 'storeModeloFinanciamiento'])
+    ->middleware(['auth','role:ADMIN'])
+    ->name('admin.proyectos.modelos.store');
+Route::delete('/admin/proyectos/modelos/{modelo}', [\App\Http\Controllers\AdminController::class, 'deleteModeloFinanciamiento'])
+    ->middleware(['auth','role:ADMIN'])
+    ->name('admin.proyectos.modelos.destroy');
 
 Route::get('/admin/auditorias', [\App\Http\Controllers\AdminController::class, 'auditorias'])
     ->middleware(['auth','role:ADMIN'])

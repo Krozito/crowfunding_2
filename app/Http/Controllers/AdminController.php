@@ -10,6 +10,8 @@ use App\Models\Pago;
 use App\Models\User;
 use App\Models\Proveedor;
 use App\Models\VerificacionSolicitud;
+use App\Models\ProyectoCategoria;
+use App\Models\ProyectoModeloFinanciamiento;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\RedirectResponse;
@@ -30,6 +32,50 @@ class AdminController extends Controller
             'verifiedUsers' => $verifiedUsers,
             'roleStats'     => $roleStats,
         ]);
+    }
+
+    public function proyectosConfig(): View
+    {
+        $categorias = ProyectoCategoria::orderBy('nombre')->get();
+        $modelos = ProyectoModeloFinanciamiento::orderBy('nombre')->get();
+
+        return view('admin.modules.proyectos-config', compact('categorias', 'modelos'));
+    }
+
+    public function storeCategoriaProyecto(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'nombre' => ['required', 'string', 'max:120', 'unique:proyecto_categorias,nombre'],
+        ]);
+
+        ProyectoCategoria::create($validated);
+
+        return back()->with('status', 'Categoria creada.');
+    }
+
+    public function deleteCategoriaProyecto(ProyectoCategoria $categoria): RedirectResponse
+    {
+        $categoria->delete();
+
+        return back()->with('status', 'Categoria eliminada.');
+    }
+
+    public function storeModeloFinanciamiento(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'nombre' => ['required', 'string', 'max:120', 'unique:proyecto_modelos_financiamiento,nombre'],
+        ]);
+
+        ProyectoModeloFinanciamiento::create($validated);
+
+        return back()->with('status', 'Modelo de financiamiento creado.');
+    }
+
+    public function deleteModeloFinanciamiento(ProyectoModeloFinanciamiento $modelo): RedirectResponse
+    {
+        $modelo->delete();
+
+        return back()->with('status', 'Modelo de financiamiento eliminado.');
     }
 
     public function roles(Request $request): View

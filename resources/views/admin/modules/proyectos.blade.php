@@ -51,7 +51,7 @@
                             <div class="flex flex-wrap items-center gap-2 text-xs text-zinc-300"></div>
                         </div>
 
-                        <form method="GET" action="{{ route('admin.proyectos') }}" class="grid gap-3 sm:grid-cols-[2fr,1fr,auto] sm:items-end">
+                        <form method="GET" action="{{ route('admin.proyectos') }}" class="grid gap-3 sm:grid-cols-[2fr,1fr,auto,auto] sm:items-end">
                             <div>
                                 <label class="text-xs text-zinc-400">Busqueda</label>
                                 <input type="text" name="q" value="{{ $search ?? '' }}" placeholder="Titulo, categoria o ubicacion"
@@ -63,6 +63,11 @@
                                 </button>
                                 <a href="{{ route('admin.proyectos') }}" class="admin-btn admin-btn-ghost">
                                     Limpiar
+                                </a>
+                            </div>
+                            <div class="flex items-end">
+                                <a href="{{ route('admin.proyectos.config') }}" class="{{ $btnSolid }} w-full justify-center">
+                                    Gestionar catalogos
                                 </a>
                             </div>
                         </form>
@@ -131,8 +136,6 @@
     </main>
 </body>
 </html>
-
-
 
 
 

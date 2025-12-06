@@ -55,11 +55,21 @@
                 </div>
                 <div>
                     <label class="text-sm text-zinc-300">Modelo de financiamiento</label>
-                    <input name="modelo_financiamiento" value="{{ $proyecto->modelo_financiamiento }}" class="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400">
+                    <select name="modelo_financiamiento_id" class="mt-1 w-full rounded-xl border border-white/10 bg-zinc-900/80 px-4 py-3 text-sm text-white focus:border-emerald-400 focus:ring-emerald-400">
+                        <option value="">Selecciona un modelo</option>
+                        @foreach ($modelos as $modelo)
+                            <option value="{{ $modelo->id }}" @selected($proyecto->modelo_financiamiento === $modelo->nombre)>{{ $modelo->nombre }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div>
                     <label class="text-sm text-zinc-300">Categoria</label>
-                    <input name="categoria" value="{{ $proyecto->categoria }}" class="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400">
+                    <select name="categoria_id" class="mt-1 w-full rounded-xl border border-white/10 bg-zinc-900/80 px-4 py-3 text-sm text-white focus:border-emerald-400 focus:ring-emerald-400">
+                        <option value="">Selecciona una categoria</option>
+                        @foreach ($categorias as $categoria)
+                            <option value="{{ $categoria->id }}" @selected($proyecto->categoria === $categoria->nombre)>{{ $categoria->nombre }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div>
                     <label class="text-sm text-zinc-300">Ubicacion</label>
