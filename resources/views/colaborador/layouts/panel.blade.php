@@ -3,130 +3,60 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@yield('title', 'Panel Colaborador') | CrowdUp</title>
-
+    <title>@yield('title', 'Panel Colab') | CrowdUp</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen">
-    @php
-        // Rutas con las que vamos a comparar
-        $navItems = [
-            [
-                'route' => 'colaborador.dashboard',
-                'label' => 'Inicio',
-                'href'  => route('colaborador.dashboard'),
-            ],
-            [
-                'route' => 'colaborador.proyectos',
-                'label' => 'Proyectos que apoyas',
-                'href'  => route('colaborador.proyectos'),
-            ],
-            [
-                'route' => 'colaborador.aportaciones',
-                'label' => 'Aportaciones',
-                'href'  => route('colaborador.aportaciones'),
-            ],
-            [
-                'route' => 'colaborador.reportes',
-                'label' => 'Reportes',
-                'href'  => route('colaborador.reportes'),
-            ],
-        ];
-    @endphp
-
-    <div class="min-h-screen flex bg-zinc-950">
-        {{-- SIDEBAR --}}
-        <aside class="w-72 border-r border-zinc-900 bg-black/40 backdrop-blur">
-            <div class="px-6 py-5 border-b border-zinc-900 flex items-center gap-2">
-                <img src="/images/brand/mark.png" alt="CrowdUp" class="h-7 w-7" />
-                <div class="flex flex-col leading-tight">
-                    <span class="text-sm font-semibold">CrowdUp Colaborador</span>
-                </div>
-            </div>
-
-            <nav class="px-4 py-6 space-y-8 text-sm">
-                <div>
-                    <p class="text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-3">
-                        Navegación
-                    </p>
-
-                    <div class="space-y-1">
-                        @foreach($navItems as $item)
-                            @php
-                                $isActive = request()->routeIs($item['route']);
-                            @endphp
-
-                            <a href="{{ $item['href'] }}"
-                               class="group flex items-center justify-between px-3 py-2 rounded-xl
-                                      text-xs font-medium transition
-                                      {{ $isActive
-                                            ? 'bg-zinc-800/70 text-zinc-50'
-                                            : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100' }}">
-                                <span>{{ $item['label'] }}</span>
-
-                                {{-- Burbuja verde SOLO cuando está activa --}}
-                                <span class="h-2.5 w-2.5 rounded-full
-                                             {{ $isActive ? 'bg-emerald-400 shadow-[0_0_0_4px_rgba(16,185,129,0.25)]' : 'bg-zinc-700/0' }}">
-                                </span>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-
-                <div>
-                    <p class="text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-3">
-                        Cuenta
-                    </p>
-
-                    <a href="{{ route('profile.edit') }}"
-                       class="flex items-center justify-between px-3 py-2 rounded-xl
-                              text-xs font-medium text-zinc-400
-                              hover:bg-zinc-900 hover:text-zinc-100 transition">
-                        <span>Mi perfil</span>
-                    </a>
-                </div>
-            </nav>
-        </aside>
-
-        {{-- CONTENIDO PRINCIPAL --}}
-        <div class="flex-1 flex flex-col">
-            {{-- CABECERA SUPERIOR --}}
-            <header class="border-b border-zinc-900 bg-black/40 backdrop-blur">
-                <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-                    <div class="flex items-center gap-3 text-xs text-zinc-400">
-                        <a href="{{ route('dashboard') }}" class="hover:text-zinc-100 transition">
-                            ← Volver al panel
-                        </a>
-                        <span class="text-zinc-600">/</span>
-                        <span class="text-zinc-300">@yield('title', 'Panel de Colaborador')</span>
-                    </div>
-
-                    <div class="flex items-center gap-3 text-xs">
-                        <span class="text-zinc-400">
-                            {{ auth()->user()->name ?? 'Usuario' }}
-                            · <span class="uppercase tracking-[0.16em] text-[11px]">Colaborador</span>
-                        </span>
-
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit"
-                                    class="px-3 py-1.5 rounded-full text-xs font-medium
-                                           bg-zinc-100 text-zinc-900 hover:bg-white transition">
-                                Salir
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </header>
-
-            {{-- CONTENIDO DE CADA PÁGINA --}}
-            <main class="flex-1">
-                @yield('content')
-            </main>
-        </div>
+    <div class="relative isolate overflow-hidden bg-zinc-950">
+        <div class="absolute -left-24 top-0 h-72 w-72 rounded-full bg-purple-700/30 blur-2xl"></div>
+        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-fuchsia-600/25 blur-2xl"></div>
     </div>
 
-    @stack('scripts')
+    @php
+        $backUrl = trim($__env->yieldContent('back_url', route('colaborador.dashboard')));
+        $backLabel = trim($__env->yieldContent('back_label', 'Volver al panel'));
+    @endphp
+    <header class="sticky top-0 z-30 border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl">
+        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-4">
+                <a href="{{ url('/') }}" class="flex items-center gap-3">
+                    <img src="/images/brand/mark.png" alt="CrowdUp" class="h-8 w-8" />
+                    <span class="text-xl font-extrabold tracking-tight">Crowd<span class="text-purple-300">Up</span> Colab</span>
+                </a>
+                @if ($backUrl)
+                    <a href="{{ $backUrl }}" class="inline-flex items-center gap-2 text-sm text-zinc-300 hover:text-white">
+                        <span aria-hidden="true">&larr;</span> {{ $backLabel }}
+                    </a>
+                @endif
+                <h1 class="text-lg font-semibold text-white">@yield('title', 'Panel colaborador')</h1>
+            </div>
+            <div class="flex items-center gap-3 text-xs leading-tight">
+                <span class="font-semibold text-white">{{ Auth::user()->nombre_completo ?? Auth::user()->name }}</span>
+                <span class="text-zinc-400 uppercase tracking-wide">Colaborador</span>
+                <form method="POST" action="{{ route('logout') }}" class="ml-2">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-white hover:border-emerald-400/60 hover:bg-white/10">
+                        Salir
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <main class="mx-auto w-full max-w-full px-0 pt-0 pb-6 space-y-8">
+        <div class="grid gap-0 lg:grid-cols-[280px_1fr] lg:min-h-[calc(100vh-64px)] lg:overflow-hidden admin-shell">
+            <aside class="lg:sticky lg:top-0 admin-sidebar">
+                @include('colaborador.partials.modules', ['active' => trim($__env->yieldContent('active')) ?: 'general'])
+            </aside>
+
+            <div class="space-y-8 lg:overflow-y-auto lg:h-full lg:pr-2 admin-scroll admin-main">
+                @yield('content')
+            </div>
+        </div>
+    </main>
 </body>
 </html>

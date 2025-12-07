@@ -47,4 +47,9 @@ class Proyecto extends Model
     {
         return $this->hasMany(\App\Models\ActualizacionProyecto::class, 'proyecto_id');
     }
+
+    public function recompensas()
+    {
+        return $this->hasMany(\App\Models\Recompensa::class, 'proyecto_id');
+    }
 }

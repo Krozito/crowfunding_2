@@ -290,6 +290,9 @@ Route::middleware(['auth', 'role:COLABORADOR'])->group(function () {
 
     Route::get('/colaborador/reportes', [ColaboradorController::class, 'reportes'])
         ->name('colaborador.reportes');
+    
+    Route::get('/colaborador/proyectos/{proyecto}', [ColaboradorController::class, 'showProyecto'])
+        ->name('colaborador.proyectos.show');
 });
 
 // Rutas de perfil (Jetstream / Breeze)
