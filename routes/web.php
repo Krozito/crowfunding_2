@@ -7,6 +7,7 @@ use App\Http\Controllers\ColaboradorController;
 use App\Http\Controllers\AuditorController;
 use App\Http\Controllers\CreatorController;
 use App\Http\Controllers\ProfileController;
+use App\Support\RoleRedirector;
 
 
 Route::get('/', function () {

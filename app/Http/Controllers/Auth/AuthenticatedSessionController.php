@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Support\RoleRedirector;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,10 +28,14 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
-        // Forzamos a la página de inicio (sin respetar URL previa protegida)
+        // Forzamos a olvidar la URL previa protegida para enviar siempre al panel
         $request->session()->forget('url.intended');
 
-        return redirect('/');
+        if ($redirect = RoleRedirector::redirect($request->user())) {
+            return $redirect;
+        }
+
+        return redirect()->route('dashboard');
     }
 
     /**
