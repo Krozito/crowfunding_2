@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ColaboradorController;
 use App\Http\Controllers\AuditorController;
@@ -299,16 +300,53 @@ Route::middleware(['auth', 'role:COLABORADOR'])->group(function () {
         ->name('colaborador.reportes');
 });
 
-
-// Dashboard general (fallback)
-Route::get('/dashboard', function () {
-    return redirect('/');
-})->middleware(['auth'])->name('dashboard');
-
+// Rutas de perfil (Jetstream / Breeze)
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
 });
+
+// =====================
+// Dashboard genérico: redirige según rol
+// =====================
+Route::get('/dashboard', function () {
+    $user = Auth::user();
+
+    if (!$user) {
+        return redirect()->route('login');
+    }
+
+    // Ajusta esto según cómo guardas el rol en el usuario
+    $role = $user->role->nombre ?? $user->role ?? null;
+
+    // ADMIN
+    if (method_exists($user, 'hasRole') && $user->hasRole('ADMIN') || $role === 'ADMIN') {
+        return redirect()->route('admin.dashboard');
+    }
+
+    // CREADOR
+    if (method_exists($user, 'hasRole') && $user->hasRole('CREADOR') || $role === 'CREADOR') {
+        return redirect()->route('creador.dashboard');
+    }
+
+    // COLABORADOR
+    if (method_exists($user, 'hasRole') && $user->hasRole('COLABORADOR') || $role === 'COLABORADOR') {
+        return redirect()->route('colaborador.dashboard');
+    }
+
+    // AUDITOR
+    if (method_exists($user, 'hasRole') && $user->hasRole('AUDITOR') || $role === 'AUDITOR') {
+        return redirect()->route('auditor.dashboard');
+    }
+
+    // Fallback por si algún usuario no tiene rol claro
+    return redirect()->route('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 require __DIR__.'/auth.php';
