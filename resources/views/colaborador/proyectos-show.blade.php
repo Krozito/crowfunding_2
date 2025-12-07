@@ -53,7 +53,7 @@
                     </span>
                 </p>
                 <div class="flex flex-wrap gap-3">
-                    <a href="#apoyar" class="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-emerald-950 shadow-[0_12px_35px_rgba(16,185,129,0.35)] hover:bg-emerald-400 transition-colors">
+                    <a href="{{ route('colaborador.proyectos.aportar', $proyecto) }}" class="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-emerald-950 shadow-[0_12px_35px_rgba(16,185,129,0.35)] hover:bg-emerald-400 transition-colors">
                         Apoyar este proyecto
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -107,8 +107,8 @@
                 <p class="text-xs text-indigo-50/80">
                     Puedes decidir aumentar tu aporte si este proyecto te inspira.
                 </p>
-                <a href="#apoyar" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-emerald-950 shadow-[0_10px_28px_rgba(16,185,129,0.35)] hover:bg-emerald-400 transition-colors">
-                    Aportar ahora
+                <a href="{{ route('colaborador.aportaciones') }}" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-500 px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-white shadow-[0_10px_28px_rgba(79,70,229,0.35)] hover:bg-indigo-400 transition-colors">
+                    Revisar mis aportes
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>

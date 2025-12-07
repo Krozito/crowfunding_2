@@ -17,6 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class CreatorController extends Controller
 {
@@ -609,6 +610,7 @@ class CreatorController extends Controller
             'monto' => ['required', 'numeric', 'min:0.01'],
             'fecha_pago' => ['nullable', 'date'],
             'concepto' => ['nullable', 'string'],
+            'calificacion' => ['nullable', 'numeric', 'min:1', 'max:5'],
             'adjuntos.*' => ['nullable', 'file', 'max:8192'],
         ]);
 
@@ -635,6 +637,15 @@ class CreatorController extends Controller
             'fecha_pago' => $validated['fecha_pago'] ?? now(),
             'concepto' => $validated['concepto'] ?? null,
             'adjuntos' => $paths,
+        ]);
+
+        // Guardamos también en el historial del proveedor
+        ProveedorHistorial::create([
+            'proveedor_id' => $proveedor->id,
+            'concepto' => $validated['concepto'] ?? 'Pago proveedor',
+            'monto' => $validated['monto'],
+            'fecha_entrega' => $validated['fecha_pago'] ?? Carbon::now(),
+            'calificacion' => $validated['calificacion'] ?? null,
         ]);
 
         return redirect()->route('creador.reportes', ['proyecto' => $proyecto->id])

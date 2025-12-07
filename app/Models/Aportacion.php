@@ -20,6 +20,10 @@ class Aportacion extends Model
         'id_transaccion_pago',
     ];
 
+    protected $casts = [
+        'fecha_aportacion' => 'datetime',
+    ];
+
     // Colaborador que hizo la aportación
     public function colaborador()
     {

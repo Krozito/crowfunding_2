@@ -287,12 +287,24 @@ Route::middleware(['auth', 'role:COLABORADOR'])->group(function () {
 
     Route::get('/colaborador/aportaciones', [ColaboradorController::class, 'aportaciones'])
         ->name('colaborador.aportaciones');
+    Route::get('/colaborador/aportaciones/{aporte}/recibo', [ColaboradorController::class, 'reciboAportacion'])
+        ->name('colaborador.aportaciones.recibo');
 
     Route::get('/colaborador/reportes', [ColaboradorController::class, 'reportes'])
         ->name('colaborador.reportes');
     
     Route::get('/colaborador/proyectos/{proyecto}', [ColaboradorController::class, 'showProyecto'])
         ->name('colaborador.proyectos.show');
+    Route::get('/colaborador/proyectos/{proyecto}/aportar', [ColaboradorController::class, 'aportarProyecto'])
+        ->name('colaborador.proyectos.aportar');
+    Route::post('/colaborador/proyectos/{proyecto}/aportar', [ColaboradorController::class, 'storeAportacion'])
+        ->name('colaborador.proyectos.aportar.store');
+    Route::get('/colaborador/proyectos/{proyecto}/resumen', [ColaboradorController::class, 'resumenProyecto'])
+        ->name('colaborador.proyectos.resumen');
+    Route::get('/colaborador/proyectos/{proyecto}/proveedores', [ColaboradorController::class, 'proveedoresProyecto'])
+        ->name('colaborador.proyectos.proveedores');
+    Route::get('/colaborador/proyectos/{proyecto}/reporte-pagos', [ColaboradorController::class, 'reportePagosProyecto'])
+        ->name('colaborador.proyectos.reporte');
 });
 
 // Rutas de perfil (Jetstream / Breeze)

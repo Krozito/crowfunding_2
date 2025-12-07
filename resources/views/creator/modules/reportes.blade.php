@@ -172,6 +172,10 @@
                             <input name="concepto" value="{{ old('concepto') }}" class="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400" placeholder="Ej. Pago factura 001 a proveedor">
                         </div>
                         <div>
+                            <label class="text-sm text-zinc-300">Calificación al proveedor (1-5)</label>
+                            <input type="number" name="calificacion" min="1" max="5" step="1" value="{{ old('calificacion') }}" class="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400" placeholder="5">
+                        </div>
+                        <div>
                             <label class="text-sm text-zinc-300">Adjuntar facturas y comprobantes</label>
                             <input type="file" name="adjuntos[]" multiple class="mt-1 block w-full text-sm text-white file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-500/20 file:px-4 file:py-2 file:text-indigo-100 hover:file:bg-indigo-500/30">
                             <p class="mt-1 text-xs text-zinc-500">Maximo 8MB por archivo.</p>

@@ -52,4 +52,9 @@ class Proyecto extends Model
     {
         return $this->hasMany(\App\Models\Recompensa::class, 'proyecto_id');
     }
+
+    public function proveedores()
+    {
+        return $this->hasMany(\App\Models\Proveedor::class, 'proyecto_id');
+    }
 }
