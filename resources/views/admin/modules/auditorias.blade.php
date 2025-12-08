@@ -1,45 +1,16 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Auditorias | CrowdUp Admin</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen">
-    <div class="relative isolate overflow-hidden bg-zinc-950">
-        <div class="absolute -left-24 top-0 h-72 w-72 rounded-full bg-indigo-600/30 blur-2xl"></div>
-        <div class="absolute right-0 top-24 h-72 w-72 rounded-full bg-fuchsia-500/25 blur-2xl"></div>
-    </div>
+@extends('admin.layouts.panel')
 
-    <header class="sticky top-0 z-30 border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl">
-        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center gap-4">
-                <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 text-sm text-zinc-300 hover:text-white">
-                    <span aria-hidden="true">&larr;</span> Volver al dashboard
-                </a>
-                <h1 class="text-lg font-semibold text-white">Auditorias y cumplimiento</h1>
-            </div>
-            <div class="flex items-center gap-3 text-xs leading-tight">
-                <span class="font-semibold text-white">{{ Auth::user()->nombre_completo ?? Auth::user()->name }}</span>
-                <span class="text-zinc-400 uppercase tracking-wide">ADMIN</span>
-            </div>
-        </div>
-    </header>
+@section('title', 'Auditorias')
+@section('active', 'auditorias')
 
-    <main class="mx-auto w-full max-w-full px-0 pt-0 pb-6">
-        <div class="grid gap-0 lg:grid-cols-[280px_1fr] lg:min-h-[calc(100vh-64px)] lg:overflow-hidden admin-shell">
-            <aside class="lg:sticky lg:top-0 admin-sidebar">
-                @include('admin.partials.modules', ['active' => 'auditorias'])
-            </aside>
-
-            <div class="space-y-8 lg:overflow-y-auto lg:h-full lg:pr-2 admin-scroll admin-main">
-                @php
-                    $resumenData = $resumen ?? [];
-                    $reportesAbiertos = $resumenData['reportes_abiertos'] ?? ($reportesPendientes->count() ?? 0);
-                    $reportesCerrados30 = $resumenData['reportes_cerrados_30d'] ?? 0;
-                    $proyectosRevision = $proyectosRevision ?? collect();
-                    $incidenciasGraves = $resumenData['incidencias_graves'] ?? 0;
+@section('content')
+    <div class="space-y-8">
+        @php
+            $resumenData = $resumen ?? [];
+            $reportesAbiertos = $resumenData['reportes_abiertos'] ?? ($reportesPendientes->count() ?? 0);
+            $reportesCerrados30 = $resumenData['reportes_cerrados_30d'] ?? 0;
+            $proyectosRevision = $proyectosRevision ?? collect();
+            $incidenciasGraves = $resumenData['incidencias_graves'] ?? 0;
                     $gastosValidados = $resumenData['gastos_validados'] ?? 0;
                     $gastosTotales = $resumenData['gastos_totales'] ?? max(1, $gastosValidados);
                     $porcentajeValidados = $gastosTotales > 0 ? round(($gastosValidados / $gastosTotales) * 100) : 0;
@@ -58,127 +29,124 @@
                     if ($gastosSinComprobante > 0) {
                         $alertasRapidas[] = $gastosSinComprobante . ' gastos sin comprobante';
                     }
-                    if ($incidenciasGraves > 0) {
-                        $alertasRapidas[] = $incidenciasGraves . ' incidencias graves en auditoria';
-                    }
-                @endphp
+            if ($incidenciasGraves > 0) {
+                $alertasRapidas[] = $incidenciasGraves . ' incidencias graves en auditoria';
+            }
+        @endphp
 
-                <section class="rounded-3xl border border-white/10 bg-zinc-900/75 shadow-2xl ring-1 ring-indigo-500/10 admin-accent-card">
-                    <div class="border-b border-white/5 px-6 py-6 space-y-2">
-                        <p class="text-[11px] font-semibold uppercase tracking-[0.32em] text-zinc-400">Auditorias y cumplimiento</p>
-                        <h2 class="text-2xl font-bold text-white">Overview de salud de auditoria</h2>
-                        <p class="text-sm text-zinc-400">Instantanea de riesgos, carga de revision y documentacion para actuar rapido.</p>
-                    </div>
-                    <div class="px-6 py-6 grid gap-4 lg:grid-cols-4 md:grid-cols-2">
-                        @php
-                            $kpis = [
-                                ['label' => 'Reportes abiertos', 'value' => $reportesAbiertos, 'href' => route('auditor.reportes'), 'badge' => 'Riesgo'],
-                                ['label' => 'Cerrados 30d', 'value' => $reportesCerrados30, 'href' => route('auditor.reportes'), 'badge' => 'Velocidad'],
-                                ['label' => 'Proyectos en revision', 'value' => $proyectosRevision->count() ?? 0, 'href' => route('admin.proyectos'), 'badge' => 'Pipeline'],
-                                ['label' => '% gastos validados', 'value' => $porcentajeValidados . '%', 'href' => route('auditor.comprobantes'), 'badge' => 'Cumplimiento'],
-                            ];
-                        @endphp
-                        @foreach ($kpis as $kpi)
-                            <a href="{{ $kpi['href'] }}" class="rounded-2xl border border-white/10 bg-gradient-to-br from-indigo-300/60 to-purple-500/40 p-[1px] shadow-lg hover:scale-[1.01] transition">
-                                <div class="h-full rounded-2xl bg-zinc-950/90 p-5 space-y-2">
-                                    <div class="flex items-center justify-between text-[11px] uppercase tracking-[0.28em] text-white/70">
-                                        <span>{{ $kpi['label'] }}</span>
-                                        <span class="rounded-full bg-white/10 px-2 py-0.5 text-[10px]">{{ $kpi['badge'] }}</span>
-                                    </div>
-                                    <p class="mt-1 text-3xl font-extrabold text-white leading-tight">{{ $kpi['value'] }}</p>
-                                    <p class="text-xs text-white/80">Ver detalle</p>
-                                </div>
-                            </a>
-                        @endforeach
-                    </div>
-                </section>
-
-                <section class="grid gap-6 xl:grid-cols-3">
-                    <article class="rounded-3xl border border-white/10 bg-zinc-900/70 p-6 shadow-xl xl:col-span-2">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Estado de documentacion</p>
-                                <h3 class="text-lg font-semibold text-white">Gastos y comprobantes</h3>
-                            </div>
-                            <a href="{{ route('auditor.comprobantes') }}" class="admin-btn admin-btn-primary text-xs">Ver lista de gastos en revision</a>
-                        </div>
-                        <div class="mt-4 grid gap-4 sm:grid-cols-3">
-                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                                <p class="text-xs uppercase tracking-[0.24em] text-emerald-200">Con comprobante ✔</p>
-                                <p class="mt-1 text-2xl font-bold text-white">{{ $gastosConComprobante }}</p>
-                            </div>
-                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                                <p class="text-xs uppercase tracking-[0.24em] text-red-200">Sin comprobante ✖</p>
-                                <p class="mt-1 text-2xl font-bold text-white">{{ $gastosSinComprobante }}</p>
-                            </div>
-                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                                <p class="text-xs uppercase tracking-[0.24em] text-amber-200">En revision 🕵️</p>
-                                <p class="mt-1 text-2xl font-bold text-white">{{ $gastosEnRevision }}</p>
-                            </div>
-                        </div>
-                        <div class="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
-                            <p class="text-xs uppercase tracking-[0.24em] text-white/70">Alertas rapidas</p>
-                            <div class="mt-3 space-y-2">
-                                @forelse($alertasRapidas as $alerta)
-                                    <div class="flex items-start gap-2 rounded-xl border border-white/10 bg-zinc-950/80 px-3 py-2 text-sm">
-                                        <span class="mt-0.5 h-2 w-2 rounded-full bg-amber-300"></span>
-                                        <span>{{ $alerta }}</span>
-                                    </div>
-                                @empty
-                                    <p class="text-sm text-zinc-400">Sin alertas criticas por ahora.</p>
-                                @endforelse
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="rounded-3xl border border-white/10 bg-zinc-900/70 p-6 shadow-xl">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Actividad reciente</p>
-                                <h3 class="text-lg font-semibold text-white">Timeline</h3>
-                            </div>
-                            <a href="{{ route('auditor.reportes') }}" class="text-xs text-indigo-200 underline">Ver mas</a>
-                        </div>
-                        <div class="mt-4 space-y-4">
-                            @forelse($actividadTimeline as $evento)
-                                <div class="flex gap-3">
-                                    <span class="mt-1 h-2 w-2 rounded-full bg-indigo-300"></span>
-                                    <div class="space-y-1">
-                                        <p class="text-sm text-white">{{ $evento['mensaje'] ?? '' }}</p>
-                                        <p class="text-[11px] uppercase tracking-wide text-zinc-400">{{ $evento['timestamp'] ?? '' }}</p>
-                                    </div>
-                                </div>
-                            @empty
-                                <p class="text-sm text-zinc-400">Aun no hay actividad reciente registrada.</p>
-                            @endforelse
-                        </div>
-                    </article>
-                </section>
-
-                <section class="rounded-3xl border border-white/10 bg-zinc-900/70 p-6 shadow-xl">
-                    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                        <div>
-                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Reportes sospechosos</p>
-                            <h3 class="text-xl font-semibold text-white">Ir a la cola de reportes</h3>
-                            <p class="text-sm text-zinc-400">Consulta y gestiona todos los reportes pendientes, aprobados o rechazados.</p>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <a href="{{ route('admin.reportes') }}" class="admin-btn admin-btn-primary text-xs">Ver reportes sospechosos</a>
-                        </div>
-                    </div>
-                    <div class="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs uppercase tracking-[0.24em] text-white/70">Reportes abiertos</p>
-                            <p class="text-2xl font-bold text-white">{{ $reportesAbiertos }}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xs uppercase tracking-[0.24em] text-zinc-400">Total en sistema</p>
-                            <p class="text-lg font-semibold text-white">{{ $resumenData['reportes_totales'] ?? ($reportesAbiertos + ($resumenData['reportes_cerrados_30d'] ?? 0)) }}</p>
-                        </div>
-                    </div>
-                </section>
+        <section class="rounded-3xl border border-white/10 bg-zinc-900/75 shadow-2xl ring-1 ring-indigo-500/10 admin-accent-card">
+            <div class="border-b border-white/5 px-6 py-6 space-y-2">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.32em] text-zinc-400">Auditorias y cumplimiento</p>
+                <h2 class="text-2xl font-bold text-white">Overview de salud de auditoria</h2>
+                <p class="text-sm text-zinc-400">Instantanea de riesgos, carga de revision y documentacion para actuar rapido.</p>
             </div>
-        </div>
-    </main>
-</body>
-</html>
+            <div class="px-6 py-6 grid gap-4 lg:grid-cols-4 md:grid-cols-2">
+                @php
+                    $kpis = [
+                        ['label' => 'Reportes abiertos', 'value' => $reportesAbiertos, 'href' => route('auditor.reportes'), 'badge' => 'Riesgo'],
+                        ['label' => 'Cerrados 30d', 'value' => $reportesCerrados30, 'href' => route('auditor.reportes'), 'badge' => 'Velocidad'],
+                        ['label' => 'Proyectos en revision', 'value' => $proyectosRevision->count() ?? 0, 'href' => route('admin.proyectos'), 'badge' => 'Pipeline'],
+                        ['label' => '% gastos validados', 'value' => $porcentajeValidados . '%', 'href' => route('auditor.comprobantes'), 'badge' => 'Cumplimiento'],
+                    ];
+                @endphp
+                @foreach ($kpis as $kpi)
+                    <a href="{{ $kpi['href'] }}" class="rounded-2xl border border-white/10 bg-gradient-to-br from-indigo-300/60 to-purple-500/40 p-[1px] shadow-lg hover:scale-[1.01] transition">
+                        <div class="h-full rounded-2xl bg-zinc-950/90 p-5 space-y-2">
+                            <div class="flex items-center justify-between text-[11px] uppercase tracking-[0.28em] text-white/70">
+                                <span>{{ $kpi['label'] }}</span>
+                                <span class="rounded-full bg-white/10 px-2 py-0.5 text-[10px]">{{ $kpi['badge'] }}</span>
+                            </div>
+                            <p class="mt-1 text-3xl font-extrabold text-white leading-tight">{{ $kpi['value'] }}</p>
+                            <p class="text-xs text-white/80">Ver detalle</p>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+
+        <section class="grid gap-6 xl:grid-cols-3">
+            <article class="rounded-3xl border border-white/10 bg-zinc-900/70 p-6 shadow-xl xl:col-span-2">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Estado de documentacion</p>
+                        <h3 class="text-lg font-semibold text-white">Gastos y comprobantes</h3>
+                    </div>
+                    <a href="{{ route('auditor.comprobantes') }}" class="admin-btn admin-btn-primary text-xs">Ver lista de gastos en revision</a>
+                </div>
+                <div class="mt-4 grid gap-4 sm:grid-cols-3">
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <p class="text-xs uppercase tracking-[0.24em] text-emerald-200">Con comprobante ✔</p>
+                        <p class="mt-1 text-2xl font-bold text-white">{{ $gastosConComprobante }}</p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <p class="text-xs uppercase tracking-[0.24em] text-red-200">Sin comprobante ✖</p>
+                        <p class="mt-1 text-2xl font-bold text-white">{{ $gastosSinComprobante }}</p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <p class="text-xs uppercase tracking-[0.24em] text-amber-200">En revision 🕵️</p>
+                        <p class="mt-1 text-2xl font-bold text-white">{{ $gastosEnRevision }}</p>
+                    </div>
+                </div>
+                <div class="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+                    <p class="text-xs uppercase tracking-[0.24em] text-white/70">Alertas rapidas</p>
+                    <div class="mt-3 space-y-2">
+                        @forelse($alertasRapidas as $alerta)
+                            <div class="flex items-start gap-2 rounded-xl border border-white/10 bg-zinc-950/80 px-3 py-2 text-sm">
+                                <span class="mt-0.5 h-2 w-2 rounded-full bg-amber-300"></span>
+                                <span>{{ $alerta }}</span>
+                            </div>
+                        @empty
+                            <p class="text-sm text-zinc-400">Sin alertas criticas por ahora.</p>
+                        @endforelse
+                    </div>
+                </div>
+            </article>
+
+            <article class="rounded-3xl border border-white/10 bg-zinc-900/70 p-6 shadow-xl">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Actividad reciente</p>
+                        <h3 class="text-lg font-semibold text-white">Timeline</h3>
+                    </div>
+                    <a href="{{ route('auditor.reportes') }}" class="text-xs text-indigo-200 underline">Ver mas</a>
+                </div>
+                <div class="mt-4 space-y-4">
+                    @forelse($actividadTimeline as $evento)
+                        <div class="flex gap-3">
+                            <span class="mt-1 h-2 w-2 rounded-full bg-indigo-300"></span>
+                            <div class="space-y-1">
+                                <p class="text-sm text-white">{{ $evento['mensaje'] ?? '' }}</p>
+                                <p class="text-[11px] uppercase tracking-wide text-zinc-400">{{ $evento['timestamp'] ?? '' }}</p>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-sm text-zinc-400">Aun no hay actividad reciente registrada.</p>
+                    @endforelse
+                </div>
+            </article>
+        </section>
+
+        <section class="rounded-3xl border border-white/10 bg-zinc-900/70 p-6 shadow-xl">
+            <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Reportes sospechosos</p>
+                    <h3 class="text-xl font-semibold text-white">Ir a la cola de reportes</h3>
+                    <p class="text-sm text-zinc-400">Consulta y gestiona todos los reportes pendientes, aprobados o rechazados.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <a href="{{ route('admin.reportes') }}" class="admin-btn admin-btn-primary text-xs">Ver reportes sospechosos</a>
+                </div>
+            </div>
+            <div class="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 flex items-center justify-between">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.24em] text-white/70">Reportes abiertos</p>
+                    <p class="text-2xl font-bold text-white">{{ $reportesAbiertos }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs uppercase tracking-[0.24em] text-zinc-400">Total en sistema</p>
+                    <p class="text-lg font-semibold text-white">{{ $resumenData['reportes_totales'] ?? ($reportesAbiertos + ($resumenData['reportes_cerrados_30d'] ?? 0)) }}</p>
+                </div>
+            </div>
+        </section>
+    </div>
+@endsection

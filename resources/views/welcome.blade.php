@@ -269,30 +269,51 @@
     </div>
   </section>
 
-  <!-- FAQ -->
+    <!-- FAQ -->
   <section id="faq" class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-16">
     <h2 class="text-3xl font-extrabold text-center">Preguntas frecuentes</h2>
     <div class="mt-8 divide-y divide-zinc-200 dark:divide-zinc-800">
       @php
         $faqs = [
-          ['q'=>'¿Cuál es la comisión?','a'=>'Cobramos 5% sobre lo recaudado + tarifa del medio de pago. Sin costos de publicación.'],
-          ['q'=>'¿Cuándo puedo retirar fondos?','a'=>'Puedes retirar cuando superes el mínimo de US$100 o al finalizar la campaña.'],
-          ['q'=>'¿Qué monedas aceptan?','a'=>'Aceptamos USD, EUR y monedas locales según país. Los donantes ven la moneda de preferencia.'],
-          ['q'=>'¿Cómo funcionan las recompensas?','a'=>'Define niveles (ej. $10, $25, $50). Al donar, el sistema registra y genera el cumplimiento automáticamente.'],
+          [
+            'q' => '¿Qué tipo de proyectos puedo publicar?',
+            'a' => 'CrowdUp está pensado para proyectos creativos, sociales, educativos y de producto con impacto positivo: documentales, causas comunitarias, tecnología con propósito, ONGs, etc. Sólo pedimos que tengas un objetivo claro, un presupuesto transparente y que respetes nuestras políticas (sin armas, apuestas, esquemas financieros ni contenido ilegal).',
+          ],
+          [
+            'q' => '¿Cómo pueden aportar los colaboradores a un proyecto?',
+            'a' => 'Cada proyecto tiene una página pública con su descripción, metas y niveles de recompensa. Los colaboradores eligen el monto que quieren aportar, seleccionan una recompensa (si aplica) y pagan con los métodos de pago habilitados en su país. El aporte queda registrado al instante y el colaborador recibe un comprobante por correo.',
+          ],
+          [
+            'q' => '¿Qué pasa con el dinero que se recauda?',
+            'a' => 'Los fondos no van directo al creador. Se mantienen en custodia (escrow) dentro de la plataforma y se liberan por etapas, según los hitos financieros del proyecto. Para cada desembolso, el creador debe justificar el uso con facturas y comprobantes, que pueden ser revisados por auditores y vistos por los colaboradores.',
+          ],
+          [
+            'q' => '¿Cómo se garantiza la transparencia del uso de fondos?',
+            'a' => 'Cada pago a proveedores queda registrado con monto, fecha, concepto, proveedor e incluso documentos de respaldo. Los colaboradores pueden ver el flujo completo: aportes, desembolsos y gastos. Además, existe un módulo de auditoría y un sistema de reportes sospechosos para que cualquier irregularidad sea revisada.',
+          ],
+          [
+            'q' => '¿Los colaboradores reciben ganancias o intereses por aportar?',
+            'a' => 'No. CrowdUp no es una plataforma de inversión ni de préstamos. Los colaboradores no reciben rendimientos financieros ni intereses; apoyan proyectos a cambio de recompensas simbólicas, productos, experiencias o simplemente por el impacto social que generan.',
+          ],
+          [
+            'q' => '¿Qué necesito para lanzar mi proyecto?',
+            'a' => 'Necesitas una idea clara, una meta de recaudación realista, un plan de uso de fondos y material básico para contar tu historia (texto, imágenes o video). Según el país y el monto que quieras recaudar, podemos solicitar verificación de identidad (KYC) y algunos datos adicionales para cumplir con normativa y cuidar a la comunidad.',
+          ],
         ];
       @endphp
 
       @foreach($faqs as $i => $f)
-      <details class="group py-5">
-        <summary class="flex cursor-pointer items-center justify-between">
-          <h3 class="font-medium">{{ $f['q'] }}</h3>
-          <span class="ml-4 inline-flex h-6 w-6 items-center justify-center rounded-full border border-zinc-300 dark:border-zinc-700 text-xs group-open:rotate-45 transition">+</span>
-        </summary>
-        <p class="mt-3 text-zinc-600 dark:text-zinc-300">{{ $f['a'] }}</p>
-      </details>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer items-center justify-between">
+            <h3 class="font-medium">{{ $f['q'] }}</h3>
+            <span class="ml-4 inline-flex h-6 w-6 items-center justify-center rounded-full border border-zinc-300 dark:border-zinc-700 text-xs group-open:rotate-45 transition">+</span>
+          </summary>
+          <p class="mt-3 text-zinc-600 dark:text-zinc-300">{{ $f['a'] }}</p>
+        </details>
       @endforeach
     </div>
   </section>
+
 
   <!-- FOOTER -->
   <footer class="border-t border-zinc-100 dark:border-zinc-800">
