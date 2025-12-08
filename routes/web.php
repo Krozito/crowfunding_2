@@ -93,9 +93,12 @@ Route::get('/admin/proveedores', [\App\Http\Controllers\AdminController::class, 
     ->middleware(['auth','role:ADMIN'])
     ->name('admin.proveedores');
 
-Route::get('/admin/reportes', [\App\Http\Controllers\AdminController::class, 'reportes'])
+Route::get('/admin/reportes', [\App\Http\Controllers\AdminController::class, 'reportesSospechosos'])
     ->middleware(['auth','role:ADMIN'])
     ->name('admin.reportes');
+Route::patch('/admin/reportes/{reporte}/estado', [\App\Http\Controllers\AdminController::class, 'updateReporteSospechosoEstado'])
+    ->middleware(['auth','role:ADMIN'])
+    ->name('admin.reportes.estado');
 Route::get('/admin/verificaciones', [\App\Http\Controllers\AdminController::class, 'verificaciones'])
     ->middleware(['auth','role:ADMIN'])
     ->name('admin.verificaciones');

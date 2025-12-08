@@ -13,6 +13,8 @@ use App\Models\VerificacionSolicitud;
 use App\Models\ProyectoCategoria;
 use App\Models\ProyectoModeloFinanciamiento;
 use App\Models\ReporteSospechoso;
+use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\RedirectResponse;
@@ -399,7 +401,184 @@ class AdminController extends Controller
 
     public function auditorias(): View
     {
-        return view('admin.modules.auditorias');
+        $desembolsosPendientes = SolicitudDesembolso::with('proyecto.creador')
+            ->where('estado', 'pendiente')
+            ->orderByDesc('created_at')
+            ->take(5)
+            ->get();
+
+        $pagosQuery = Pago::with(['proveedor', 'solicitud.proyecto'])
+            ->orderByDesc('fecha_pago')
+            ->orderByDesc('id');
+        $pagosAll = $pagosQuery->get();
+        $pagosObservados = $pagosAll
+            ->filter(fn ($p) => in_array($p->estado_auditoria, ['observado', 'rechazado']))
+            ->take(5);
+
+        $reportesPendientes = ReporteSospechoso::with(['proyecto', 'colaborador'])
+            ->where('estado', 'pendiente')
+            ->orderByDesc('created_at')
+            ->take(5)
+            ->get();
+
+        $proyectosRevision = Proyecto::with('creador')
+            ->where('estado', 'borrador')
+            ->orderByDesc('created_at')
+            ->take(5)
+            ->get();
+
+        $gastosConComprobante = $pagosAll->filter(fn ($p) => !empty($p->adjuntos))->count();
+        $gastosSinComprobante = $pagosAll->filter(fn ($p) => empty($p->adjuntos))->count();
+        $gastosEnRevision = $pagosAll->where('estado_auditoria', 'pendiente')->count();
+        $gastosValidados = $pagosAll->where('estado_auditoria', 'aprobado')->count();
+        $gastosTotales = $pagosAll->count();
+
+        $reportesCerrados30 = ReporteSospechoso::where('estado', '!=', 'pendiente')
+            ->where('updated_at', '>=', Carbon::now()->subDays(30))
+            ->count();
+
+        $actividadTimeline = collect();
+        $pagosTimeline = $pagosAll
+            ->sortByDesc(fn ($p) => $p->updated_at ?? $p->created_at)
+            ->take(5)
+            ->map(function ($pago) {
+                $proyecto = $pago->solicitud->proyecto->titulo ?? 'Proyecto';
+                $estado = ucfirst($pago->estado_auditoria ?? 'pendiente');
+                return [
+                    'mensaje' => "Pago de US$ " . number_format($pago->monto, 2) . " en {$proyecto} marcado como {$estado}",
+                    'timestamp' => optional($pago->updated_at ?? $pago->fecha_pago)->format('d/m/Y H:i'),
+                ];
+            });
+
+        $reportesTimeline = ReporteSospechoso::with(['proyecto', 'colaborador'])
+            ->orderByDesc('updated_at')
+            ->take(3)
+            ->get()
+            ->map(function ($rep) {
+                $proyecto = $rep->proyecto->titulo ?? 'Proyecto';
+                $estado = ucfirst($rep->estado ?? 'pendiente');
+                return [
+                    'mensaje' => "Reporte #{$rep->id} en {$proyecto} ({$estado})",
+                    'timestamp' => optional($rep->updated_at)->format('d/m/Y H:i'),
+                ];
+            });
+
+        $actividadTimeline = $actividadTimeline
+            ->merge($pagosTimeline)
+            ->merge($reportesTimeline)
+            ->sortByDesc('timestamp')
+            ->values()
+            ->take(6);
+
+        $auditLog = collect();
+        $accionesPagos = $pagosAll
+            ->filter(fn ($p) => in_array($p->estado_auditoria, ['aprobado', 'rechazado', 'observado']))
+            ->sortByDesc(fn ($p) => $p->updated_at ?? $p->created_at)
+            ->take(5)
+            ->map(function ($pago) {
+                $proyecto = $pago->solicitud->proyecto->titulo ?? 'Proyecto';
+                $estado = ucfirst($pago->estado_auditoria ?? 'pendiente');
+                return [
+                    'usuario' => 'Auditor',
+                    'accion' => "{$estado} pago en {$proyecto}",
+                    'fecha' => optional($pago->updated_at ?? $pago->fecha_pago)->format('d/m/Y H:i'),
+                ];
+            });
+
+        $accionesDesembolsos = SolicitudDesembolso::with('proyecto')
+            ->whereIn('estado', ['aprobado', 'liberado', 'pagado', 'gastado', 'rechazado'])
+            ->orderByDesc('updated_at')
+            ->take(3)
+            ->get()
+            ->map(function ($sol) {
+                $proyecto = $sol->proyecto->titulo ?? 'Proyecto';
+                $estado = ucfirst($sol->estado ?? 'pendiente');
+                return [
+                    'usuario' => 'Admin/Auditor',
+                    'accion' => "{$estado} desembolso {$proyecto}",
+                    'fecha' => optional($sol->updated_at ?? $sol->created_at)->format('d/m/Y H:i'),
+                ];
+            });
+
+        $auditLog = $auditLog->merge($accionesPagos)->merge($accionesDesembolsos)->take(6);
+
+        $resumen = [
+            'desembolsos_pendientes' => SolicitudDesembolso::where('estado', 'pendiente')->count(),
+            'pagos_observados' => $pagosAll->whereIn('estado_auditoria', ['observado', 'rechazado'])->count(),
+            'reportes_abiertos' => ReporteSospechoso::where('estado', 'pendiente')->count(),
+            'proyectos_revision' => Proyecto::where('estado', 'borrador')->count(),
+            'reportes_cerrados_30d' => $reportesCerrados30,
+            'incidencias_graves' => $pagosAll->whereIn('estado_auditoria', ['observado', 'rechazado'])->count(),
+            'gastos_validados' => $gastosValidados,
+            'gastos_totales' => $gastosTotales,
+            'gastos_con_comprobante' => $gastosConComprobante,
+            'gastos_sin_comprobante' => $gastosSinComprobante,
+            'gastos_en_revision' => $gastosEnRevision,
+        ];
+
+        return view('admin.modules.auditorias', compact(
+            'desembolsosPendientes',
+            'pagosObservados',
+            'reportesPendientes',
+            'proyectosRevision',
+            'resumen',
+            'actividadTimeline',
+            'auditLog'
+        ));
+    }
+
+    public function reportesSospechosos(Request $request): View
+    {
+        $estado = $request->query('estado');
+        $q = $request->query('q');
+
+        $reportesQuery = ReporteSospechoso::with(['proyecto', 'colaborador'])
+            ->orderByDesc('created_at');
+
+        if ($estado) {
+            $reportesQuery->where('estado', $estado);
+        }
+
+        if ($q) {
+            $reportesQuery->where(function ($sub) use ($q) {
+                $sub->whereHas('proyecto', fn ($inner) => $inner->where('titulo', 'like', "%{$q}%"))
+                    ->orWhereHas('colaborador', fn ($inner) => $inner->where('nombre_completo', 'like', "%{$q}%")
+                        ->orWhere('name', 'like', "%{$q}%"))
+                    ->orWhere('motivo', 'like', "%{$q}%");
+            });
+        }
+
+        /** @var LengthAwarePaginator $reportes */
+        $reportes = $reportesQuery->paginate(12)->withQueryString();
+        $estados = ReporteSospechoso::select('estado')->distinct()->pluck('estado')->filter()->values();
+
+        $totales = [
+            'abiertos' => ReporteSospechoso::where('estado', 'pendiente')->count(),
+            'total' => ReporteSospechoso::count(),
+        ];
+
+        return view('admin.modules.reportes-sospechosos', compact(
+            'reportes',
+            'estado',
+            'q',
+            'estados',
+            'totales'
+        ));
+    }
+
+    public function updateReporteSospechosoEstado(Request $request, ReporteSospechoso $reporte): RedirectResponse
+    {
+        $validated = $request->validate([
+            'accion' => ['required', 'in:aprobar,rechazar'],
+            'respuesta' => ['required', 'string', 'min:20', 'max:500'],
+        ]);
+
+        $nuevoEstado = $validated['accion'] === 'aprobar' ? 'aprobado' : 'rechazado';
+        $reporte->estado = $nuevoEstado;
+        $reporte->respuesta = $validated['respuesta'];
+        $reporte->save();
+
+        return back()->with('status', "Reporte #{$reporte->id} {$nuevoEstado}.");
     }
 
     public function finanzas(): View
