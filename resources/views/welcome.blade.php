@@ -66,7 +66,7 @@
       <div>
         <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full dark:text-indigo-300 dark:bg-indigo-900/30">Lanza en minutos</span>
         <h1 class="mt-5 text-4xl sm:text-5xl font-extrabold leading-tight">
-          Financia proyectos que <span class="text-indigo-600">merecen existir</span>
+          Financia sueños que <span class="text-indigo-600">merecen existir</span>
         </h1>
         <p class="mt-4 text-lg text-zinc-600 dark:text-zinc-300">
           Crea tu campaña, comparte con tu comunidad y recauda fondos de forma segura. Sin fricción, sin trucos. Sólo impulso real.
