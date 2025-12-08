@@ -10,14 +10,6 @@
             <h1 class="text-2xl font-bold text-white">Auditoria de proyectos</h1>
             <p class="text-sm text-zinc-400">Revisa publicaciones, estados y toma acciones.</p>
         </div>
-        <a href="{{ route('logout') }}"
-           onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-           class="inline-flex items-center rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10">
-            Salir
-        </a>
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-            @csrf
-        </form>
     </div>
 
     <div class="px-4 sm:px-6 lg:px-8 space-y-6">

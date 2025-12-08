@@ -186,6 +186,22 @@
         overflow-y: auto;
         padding-right: 0.5rem;
     }
+    .admin-auditor-content {
+        border-radius: 32px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: linear-gradient(180deg, rgba(147, 51, 234, 0.12), rgba(15, 7, 44, 0.95));
+        box-shadow: 0 40px 80px rgba(15, 0, 44, 0.75), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+        padding: 2.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .admin-auditor-content::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at 20% 0%, rgba(168, 85, 247, 0.05), transparent 45%);
+    }
     @media (min-width: 1024px) {
         .admin-main {
             padding-right: 0.75rem;

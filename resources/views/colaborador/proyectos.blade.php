@@ -1,5 +1,6 @@
 @extends('colaborador.layouts.panel')
 
+@section('active', 'proyectos')
 @section('title', 'Proyectos que apoyas')
 
 @section('content')

@@ -207,13 +207,40 @@ class AuditorController extends Controller
             ->with('status', "Solicitud {$nuevoEstado}.");
     }
 
-    public function reportes()
+    public function reportes(Request $request)
     {
-        $reportesColab = ReporteSospechoso::with(['proyecto', 'colaborador'])
-            ->orderByDesc('created_at')
-            ->get();
+        $q = $request->query('q');
+        $estado = $request->query('estado');
 
-        return view('auditor.modules.reportes', compact('reportesColab'));
+        $reportesQuery = ReporteSospechoso::with(['proyecto', 'colaborador'])
+            ->orderByDesc('created_at')
+            ->when($estado, fn($query) => $query->where('estado', $estado))
+            ->when($q, fn($query) => $query->where(function ($sub) use ($q) {
+                $sub->whereHas('proyecto', fn($inner) => $inner->where('titulo', 'like', "%{$q}%"))
+                    ->orWhereHas('colaborador', fn($inner) => $inner->where('nombre_completo', 'like', "%{$q}%")
+                        ->orWhere('name', 'like', "%{$q}%"))
+                    ->orWhere('motivo', 'like', "%{$q}%");
+            }));
+
+        $reportesColab = $reportesQuery->paginate(12)->withQueryString();
+        $estados = ReporteSospechoso::select('estado')->distinct()->pluck('estado')->filter()->values();
+
+        return view('auditor.modules.reportes', compact('reportesColab', 'q', 'estado', 'estados'));
+    }
+
+    public function updateReporteEstado(Request $request, ReporteSospechoso $reporte)
+    {
+        $validated = $request->validate([
+            'accion' => ['required', 'in:aprobar,rechazar'],
+            'respuesta' => ['required', 'string', 'min:20', 'max:500'],
+        ]);
+
+        $nuevoEstado = $validated['accion'] === 'aprobar' ? 'aprobado' : 'rechazado';
+        $reporte->estado = $nuevoEstado;
+        $reporte->respuesta = $validated['respuesta'] ?? null;
+        $reporte->save();
+
+        return back()->with('status', "Reporte {$nuevoEstado}.");
     }
     public function hitos()
     {

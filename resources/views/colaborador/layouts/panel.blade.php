@@ -29,7 +29,7 @@
                         <span aria-hidden="true">&larr;</span> {{ $backLabel }}
                     </a>
                 @endif
-                <h1 class="text-lg font-semibold text-white">@yield('title', 'Panel colaborador')</h1>
+                
             </div>
             <div class="flex items-center gap-3 text-xs leading-tight">
                 <span class="font-semibold text-white">{{ Auth::user()->nombre_completo ?? Auth::user()->name }}</span>

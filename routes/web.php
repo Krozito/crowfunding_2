@@ -131,6 +131,9 @@ Route::patch('/auditor/desembolsos/{solicitud}/estado', [\App\Http\Controllers\A
 Route::get('/auditor/reportes', [\App\Http\Controllers\AuditorController::class, 'reportes'])
     ->middleware(['auth','role:AUDITOR'])
     ->name('auditor.reportes');
+Route::patch('/auditor/reportes/{reporte}/estado', [\App\Http\Controllers\AuditorController::class, 'updateReporteEstado'])
+    ->middleware(['auth','role:AUDITOR'])
+    ->name('auditor.reportes.estado');
 Route::get('/auditor/hitos', [\App\Http\Controllers\AuditorController::class, 'hitos'])
     ->middleware(['auth','role:AUDITOR'])
     ->name('auditor.hitos');

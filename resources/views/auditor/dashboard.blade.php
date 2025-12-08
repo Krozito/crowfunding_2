@@ -5,17 +5,6 @@
 @section('back_url', '')
 
 @section('content')
-    <div class="flex justify-end px-4 sm:px-6 lg:px-8 pt-6">
-        <a href="{{ route('logout') }}"
-           onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-           class="inline-flex items-center rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10">
-            Salir
-        </a>
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-            @csrf
-        </form>
-    </div>
-
     <div class="space-y-10 px-4 sm:px-6 lg:px-8">
         <section id="overview" class="relative overflow-hidden rounded-[22px] admin-hero px-8 py-10 shadow-2xl ring-1 ring-white/15">
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.22),_transparent_45%)] blur-[2px]"></div>

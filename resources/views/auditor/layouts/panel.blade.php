@@ -29,11 +29,20 @@
                         <span aria-hidden="true">&larr;</span> {{ $backLabel }}
                     </a>
                 @endif
-                <h1 class="text-lg font-semibold text-white">@yield('title', 'Panel auditor')</h1>
+                
             </div>
             <div class="flex items-center gap-3 text-xs leading-tight">
                 <span class="font-semibold text-white">{{ Auth::user()->nombre_completo ?? Auth::user()->name }}</span>
                 <span class="text-zinc-400 uppercase tracking-wide">AUDITOR</span>
+                <form method="POST" action="{{ route('logout') }}" class="ml-2">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-white hover:border-indigo-400/60 hover:bg-white/10">
+                        Salir
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+                        </svg>
+                    </button>
+                </form>
             </div>
         </div>
     </header>
@@ -45,7 +54,9 @@
             </aside>
 
             <div class="space-y-8 lg:overflow-y-auto lg:h-full lg:pr-2 admin-scroll admin-main">
-                @yield('content')
+                <section class="admin-auditor-content">
+                    @yield('content')
+                </section>
             </div>
         </div>
     </main>
