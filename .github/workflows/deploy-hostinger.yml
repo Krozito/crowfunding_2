@@ -44,7 +44,7 @@ jobs:
           php -r "file_put_contents('.env.testing', \"APP_ENV=testing\nAPP_KEY=base64:\".base64_encode(random_bytes(32)).\"\nDB_CONNECTION=sqlite\nDB_DATABASE=:memory:\n\", FILE_APPEND);"
 
       - name: Run tests
-        run: php artisan test --env=testing --without-tty
+        run: php artisan test --env=testing
 
   build-and-deploy:
     runs-on: ubuntu-latest
