@@ -117,7 +117,7 @@ jobs:
         uses: easingthemes/ssh-deploy@v5.0.3
         env:
           SSH_PRIVATE_KEY: ${{ secrets.H_SSH_KEY }}
-          ARGS: "-az --delete"
+          ARGS: "-az --delete --exclude='.env' --exclude='storage/app/' --exclude='storage/logs/'"
           SOURCE: "deploy/"
           REMOTE_HOST: ${{ secrets.H_HOST }}
           REMOTE_USER: ${{ secrets.H_USER }}
