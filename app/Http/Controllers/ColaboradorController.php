@@ -51,6 +51,7 @@ class ColaboradorController extends Controller
                     $q->where('colaborador_id', $colaboradorId);
                 },
             ])
+            ->where('estado', 'publicado')
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('titulo', 'like', "%{$search}%")
@@ -151,7 +152,8 @@ class ColaboradorController extends Controller
     {
         $q = $request->query('q');
 
-        $proyectos = Proyecto::when($q, function ($query) use ($q) {
+        $proyectos = Proyecto::where('estado', 'publicado')
+            ->when($q, function ($query) use ($q) {
                 $query->where('titulo', 'like', "%{$q}%");
             })
             ->orderBy('titulo')
