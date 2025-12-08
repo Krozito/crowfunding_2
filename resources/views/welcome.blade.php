@@ -69,7 +69,7 @@
           Financia ideas que <span class="text-indigo-600">merecen existir</span>
         </h1>
         <p class="mt-4 text-lg text-zinc-600 dark:text-zinc-300">
-          Crea tu 
+          Crea tu campaña, comparte con tu comunidad y recauda fondos de forma segura. Sin fricción, sin trucos.
         </p>
 
         <div class="mt-6 flex flex-wrap items-center gap-3">
