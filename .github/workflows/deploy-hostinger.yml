@@ -43,6 +43,18 @@ jobs:
           cp .env.example .env.testing
           php -r "file_put_contents('.env.testing', \"APP_ENV=testing\nAPP_KEY=base64:\".base64_encode(random_bytes(32)).\"\nDB_CONNECTION=sqlite\nDB_DATABASE=:memory:\nSESSION_DRIVER=array\nCACHE_STORE=array\nQUEUE_CONNECTION=sync\n\", FILE_APPEND);"
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install JS dependencies (for Vite manifest)
+        run: npm ci --no-audit --no-fund
+
+      - name: Build frontend assets (for tests)
+        run: npm run build
+
       - name: Run migrations (testing)
         run: php artisan migrate --env=testing --force
 
