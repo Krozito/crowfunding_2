@@ -104,13 +104,6 @@
                         <textarea name="contenido" rows="4" class="mt-1 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400" placeholder="Comparte avances, bloqueos o próximos pasos..."></textarea>
                     </div>
                     <div>
-                        <label class="inline-flex items-center gap-2 text-sm text-zinc-200">
-                            <input type="checkbox" name="es_hito" value="1" class="h-4 w-4 rounded border-white/20 bg-zinc-900 text-indigo-500 focus:ring-indigo-400">
-                            Marcar como hito cumplido
-                        </label>
-                        <p class="text-[11px] text-zinc-500 ml-6">Si es un hito, se mostrará con más relevancia a colaboradores.</p>
-                    </div>
-                    <div>
                         <label class="text-sm font-semibold text-white">Adjuntos (arrastra o selecciona archivos)</label>
                         <input type="file" name="adjuntos[]" multiple class="mt-1 block w-full text-sm text-white file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-500/20 file:px-4 file:py-2 file:text-indigo-100 hover:file:bg-indigo-500/30" data-file-preview="avance-nuevo">
                         <div class="mt-2 flex flex-wrap gap-2 text-xs text-zinc-300" data-file-list="avance-nuevo"></div>

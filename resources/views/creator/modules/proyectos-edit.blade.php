@@ -79,14 +79,6 @@
                     <label class="text-sm text-zinc-300">Fecha limite</label>
                     <input type="date" name="fecha_limite" value="{{ optional($proyecto->fecha_limite)->format('Y-m-d') }}" class="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400">
                 </div>
-                <div class="md:col-span-1">
-                    <label class="text-sm text-zinc-300">Cronograma (JSON)</label>
-                    <textarea name="cronograma" rows="3" class="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400">{{ is_array($proyecto->cronograma) ? json_encode($proyecto->cronograma) : $proyecto->cronograma }}</textarea>
-                </div>
-                <div class="md:col-span-1">
-                    <label class="text-sm text-zinc-300">Presupuesto (JSON)</label>
-                    <textarea name="presupuesto" rows="3" class="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400">{{ is_array($proyecto->presupuesto) ? json_encode($proyecto->presupuesto) : $proyecto->presupuesto }}</textarea>
-                </div>
                 <div class="md:col-span-2">
                     <label class="text-sm text-zinc-300">Reemplazar portada</label>
                     <input type="file" name="portada" accept="image/*" class="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400">

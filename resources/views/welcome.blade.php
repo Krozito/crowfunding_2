@@ -175,7 +175,7 @@
                   <span>72% financiado</span><span>US$ 18,200</span>
                 </div>
               </div>
-              <a href="#" class="mt-4 inline-flex px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">Apoyar</a>
+              <a href="{{ route('login') }}" class="mt-4 inline-flex px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">Apoyar</a>
             </div>
           </article>
 
@@ -193,7 +193,7 @@
                   <span>45% financiado</span><span>US$ 9,050</span>
                 </div>
               </div>
-              <a href="#" class="mt-4 inline-flex px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">Apoyar</a>
+              <a href="{{ route('login') }}" class="mt-4 inline-flex px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">Apoyar</a>
             </div>
           </article>
 
@@ -211,7 +211,7 @@
                   <span>88% financiado</span><span>US$ 26,740</span>
                 </div>
               </div>
-              <a href="#" class="mt-4 inline-flex px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">Apoyar</a>
+              <a href="{{ route('login') }}" class="mt-4 inline-flex px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">Apoyar</a>
             </div>
           </article>
         </div>
