@@ -43,6 +43,9 @@ jobs:
           cp .env.example .env.testing
           php -r "file_put_contents('.env.testing', \"APP_ENV=testing\nAPP_KEY=base64:\".base64_encode(random_bytes(32)).\"\nDB_CONNECTION=sqlite\nDB_DATABASE=:memory:\nSESSION_DRIVER=array\nCACHE_STORE=array\nQUEUE_CONNECTION=sync\n\", FILE_APPEND);"
 
+      - name: Run migrations (testing)
+        run: php artisan migrate --env=testing --force
+
       - name: Run tests
         run: php artisan test --env=testing
 
