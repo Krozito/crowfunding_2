@@ -114,7 +114,7 @@ jobs:
             ./ deploy/
 
       - name: Deploy to Hostinger (rsync over SSH)
-        uses: burnett01/rsync-deployments@v1.1
+        uses: burnett01/rsync-deployments@v1.0.2
         with:
           switches: -az --delete
           path: deploy/
