@@ -12,6 +12,7 @@ use App\Models\Proveedor;
 use App\Models\VerificacionSolicitud;
 use App\Models\ProyectoCategoria;
 use App\Models\ProyectoModeloFinanciamiento;
+use App\Models\ReporteSospechoso;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\RedirectResponse;
@@ -27,10 +28,63 @@ class AdminController extends Controller
         $verifiedUsers = User::where('estado_verificacion', true)->count();
         $roleStats = Role::withCount('users')->orderBy('nombre_rol')->get();
 
+        // Proyectos por estado
+        $proyectosTotales = Proyecto::count();
+        $proyectosPublicados = Proyecto::where('estado', 'publicado')->count();
+        $proyectosRevision = Proyecto::whereIn('estado', ['borrador', 'pendiente', 'en_revision'])->count();
+        $proyectosRiesgo = Proyecto::whereIn('estado', ['pausado', 'riesgo'])->count();
+
+        // Finanzas globales
+        $totalRecaudado = Aportacion::sum('monto');
+        $solicitudes = SolicitudDesembolso::all();
+        $fondosLiberados = $solicitudes->whereIn('estado', ['liberado', 'aprobado', 'pagado', 'gastado'])->sum('monto_solicitado');
+        $fondosEscrow = max($totalRecaudado - $fondosLiberados, 0);
+        $fondosGastados = Pago::sum('monto');
+
+        // Pendientes críticos
+        $pendientesKyc = VerificacionSolicitud::where('estado', 'pendiente')->count();
+        $pendientesProyectos = $proyectosRevision;
+        $pendientesDesembolsos = SolicitudDesembolso::where('estado', 'pendiente')->count();
+        $reportesAbiertos = \App\Models\ReporteSospechoso::where('estado', 'pendiente')->count();
+
+        // Riesgos
+        $gastosObservados = Pago::whereIn('estado_auditoria', ['observado', 'rechazado'])->count();
+
+        // Actividad reciente (simple timeline)
+        $actividadReciente = collect([
+            $this->actividadItem(Aportacion::with('proyecto')->latest()->first(), 'aporte'),
+            $this->actividadItem(SolicitudDesembolso::with('proyecto')->latest()->first(), 'desembolso'),
+            $this->actividadItem(\App\Models\ReporteSospechoso::with('proyecto')->latest()->first(), 'reporte'),
+        ])->filter()->sortByDesc('created_at')->take(5);
+
         return view('admin.dashboard', [
             'totalUsers'    => $totalUsers,
             'verifiedUsers' => $verifiedUsers,
             'roleStats'     => $roleStats,
+            'projects' => [
+                'total' => $proyectosTotales,
+                'publicados' => $proyectosPublicados,
+                'revision' => $proyectosRevision,
+                'riesgo' => $proyectosRiesgo,
+            ],
+            'finanzas' => [
+                'recaudado' => $totalRecaudado,
+                'escrow' => $fondosEscrow,
+                'liberado' => $fondosLiberados,
+                'gastado' => $fondosGastados,
+            ],
+            'pendientes' => [
+                'kyc' => $pendientesKyc,
+                'proyectos' => $pendientesProyectos,
+                'desembolsos' => $pendientesDesembolsos,
+                'reportes' => $reportesAbiertos,
+            ],
+            'riesgos' => [
+                'reportes' => $reportesAbiertos,
+                'gastos_observados' => $gastosObservados,
+                'proyectos_riesgo' => $proyectosRiesgo,
+            ],
+            'actividadReciente' => $actividadReciente,
         ]);
     }
 
@@ -82,6 +136,7 @@ class AdminController extends Controller
     {
         $search = $request->query('q');
         $roleFilter = $request->query('role');
+        $verificationFilter = $request->query('verificacion');
 
         $usersQuery = User::with('roles')->orderBy('name');
 
@@ -99,6 +154,12 @@ class AdminController extends Controller
             });
         }
 
+        if ($verificationFilter === 'verificado') {
+            $usersQuery->where('estado_verificacion', true);
+        } elseif ($verificationFilter === 'pendiente') {
+            $usersQuery->where('estado_verificacion', false);
+        }
+
         $users = $usersQuery->paginate(12)->withQueryString();
         $roles = Role::orderBy('nombre_rol')->get();
 
@@ -107,6 +168,7 @@ class AdminController extends Controller
             'roles' => $roles,
             'search' => $search,
             'roleFilter' => $roleFilter,
+            'verificationFilter' => $verificationFilter,
         ]);
     }
 
@@ -166,6 +228,10 @@ class AdminController extends Controller
     public function proyectos(Request $request): View
     {
         $search = $request->query('q');
+        $estado = $request->query('estado');
+        $categoria = $request->query('categoria');
+        $modelo = $request->query('modelo');
+
         $proyectosQuery = Proyecto::with('creador')->orderByDesc('created_at');
 
         if ($search) {
@@ -176,9 +242,52 @@ class AdminController extends Controller
             });
         }
 
-        $proyectos = $proyectosQuery->paginate(10)->withQueryString();
+        if ($estado) {
+            $proyectosQuery->where('estado', $estado);
+        }
 
-        return view('admin.modules.proyectos', compact('proyectos', 'search'));
+        if ($categoria) {
+            $proyectosQuery->where('categoria', $categoria);
+        }
+
+        if ($modelo) {
+            $proyectosQuery->where('modelo_financiamiento', $modelo);
+        }
+
+        $proyectos = $proyectosQuery->paginate(10)->withQueryString();
+        $categorias = ProyectoCategoria::orderBy('nombre')->pluck('nombre');
+        $modelos = ProyectoModeloFinanciamiento::orderBy('nombre')->pluck('nombre');
+
+        $recaudadoPorProyecto = Aportacion::selectRaw('proyecto_id, SUM(monto) as total')
+            ->groupBy('proyecto_id')
+            ->pluck('total', 'proyecto_id');
+        $reportesPorProyecto = ReporteSospechoso::selectRaw('proyecto_id, COUNT(*) as total')
+            ->groupBy('proyecto_id')
+            ->pluck('total', 'proyecto_id');
+
+        $estadoCounts = Proyecto::select('estado', DB::raw('COUNT(*) as total'))
+            ->groupBy('estado')
+            ->pluck('total', 'estado');
+        $estadoResumen = [
+            'borrador' => $estadoCounts['borrador'] ?? 0,
+            'en_revision' => ($estadoCounts['pendiente'] ?? 0) + ($estadoCounts['en_revision'] ?? 0),
+            'publicado' => $estadoCounts['publicado'] ?? 0,
+            'pausado' => $estadoCounts['pausado'] ?? 0,
+            'rechazado' => $estadoCounts['rechazado'] ?? 0,
+        ];
+
+        return view('admin.modules.proyectos', compact(
+            'proyectos',
+            'search',
+            'estado',
+            'categoria',
+            'modelo',
+            'categorias',
+            'modelos',
+            'estadoResumen',
+            'recaudadoPorProyecto',
+            'reportesPorProyecto'
+        ));
     }
 
     public function showProyecto(Proyecto $proyecto): View
@@ -216,6 +325,26 @@ class AdminController extends Controller
         $fondosLiberados = $solicitudes->whereIn('estado', ['liberado','aprobado','pagado','gastado'])->sum('monto_solicitado');
         $pendiente = $solicitudes->where('estado', 'pendiente')->sum('monto_solicitado');
         $retenido = max($totalRecaudado - $fondosLiberados, 0);
+        $fondosGastados = Pago::whereHas('solicitud', fn($q) => $q->where('proyecto_id', $proyecto->id))->sum('monto');
+
+        $reportesSospechosos = ReporteSospechoso::where('proyecto_id', $proyecto->id);
+        $reportesAbiertos = (clone $reportesSospechosos)->where('estado', 'pendiente')->count();
+        $reportesTotales = $reportesSospechosos->count();
+        $pagosObservados = Pago::whereHas('solicitud', fn($q) => $q->where('proyecto_id', $proyecto->id))
+            ->whereIn('estado_auditoria', ['observado', 'rechazado'])
+            ->count();
+
+        $transparencia = $fondosLiberados > 0 ? round(($fondosGastados / $fondosLiberados) * 100) : 0;
+
+        $desembolsosRecientes = SolicitudDesembolso::where('proyecto_id', $proyecto->id)
+            ->latest()
+            ->take(5)
+            ->get();
+        $pagosRecientes = Pago::with('proveedor')
+            ->whereHas('solicitud', fn($q) => $q->where('proyecto_id', $proyecto->id))
+            ->latest('fecha_pago')
+            ->take(5)
+            ->get();
 
         return view('admin.modules.proyectos-show', [
             'proyecto' => $proyecto,
@@ -226,7 +355,16 @@ class AdminController extends Controller
                 'liberados' => $fondosLiberados,
                 'retenidos' => $retenido,
                 'pendiente' => $pendiente,
+                'gastado' => $fondosGastados,
             ],
+            'riesgos' => [
+                'reportes_abiertos' => $reportesAbiertos,
+                'reportes_totales' => $reportesTotales,
+                'pagos_observados' => $pagosObservados,
+                'transparencia' => $transparencia,
+            ],
+            'desembolsosRecientes' => $desembolsosRecientes,
+            'pagosRecientes' => $pagosRecientes,
         ]);
     }
 
@@ -554,5 +692,14 @@ class AdminController extends Controller
         return Response::streamDownload($callback, $filename, [
             'Content-Type' => 'application/vnd.ms-excel',
         ]);
+    }
+
+    private function actividadItem($model, string $tipo): ?array
+    {
+        if (!$model) {
+            return null;
+        }
+
+        return array_merge($model->only(['id', 'created_at']), ['tipo' => $tipo]);
     }
 }

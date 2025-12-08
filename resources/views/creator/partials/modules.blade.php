@@ -240,9 +240,9 @@ document.addEventListener('DOMContentLoaded', () => {
         <a href="{{ route('creador.dashboard') }}" class="{{ $linkClass }} {{ $active === 'dashboard' ? $activeClass : '' }}">
             <span class="flex items-center gap-2">
                 <span class="inline-flex h-2 w-2 rounded-full bg-indigo-400"></span>
-                Dashboard
+                Inicio
             </span>
-            <span class="text-xs text-indigo-100/90">Inicio</span>
+            <span class="text-xs text-indigo-100/90">Panel</span>
         </a>
         <a href="{{ route('creador.proyectos') }}" class="{{ $linkClass }} {{ $active === 'proyectos' ? $activeClass : '' }}">
             <span class="flex items-center gap-2">
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <a href="{{ route('creador.reportes') }}" class="{{ $linkClass }} {{ $active === 'reportes' ? $activeClass : '' }}">
             <span class="flex items-center gap-2">
                 <span class="inline-flex h-2 w-2 rounded-full bg-indigo-100"></span>
-                Reportes
+                Reporte de pagos
             </span>
             <span class="text-xs text-indigo-100/90">Ir</span>
         </a>

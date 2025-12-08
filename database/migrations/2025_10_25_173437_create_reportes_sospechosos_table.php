@@ -6,15 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('reportes_sospechosos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('colaborador_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('proyecto_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('proyecto_id')->constrained('proyectos')->cascadeOnDelete();
             $table->text('motivo');
             $table->json('evidencias')->nullable();
             $table->string('estado', 30)->default('pendiente');
@@ -23,9 +20,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('reportes_sospechosos');
